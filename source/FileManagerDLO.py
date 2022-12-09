@@ -19,6 +19,7 @@ def createShortcut(ps1FilePath,targetFolder):
     #absoluter pfad von der powershell exe
     powerShellExePath = "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
 
+    ps1FilePath = "C:\\Users\\hvb63\\OneDrive\\Desktop\\Schule\\4bhif\\syp\\createShortcutCommands.ps1"
     try:
         #all entries of the targetFolder
         entries = os.listdir(targetFolder)
