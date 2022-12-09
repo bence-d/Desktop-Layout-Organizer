@@ -6,6 +6,7 @@ import os
 #alle print statements sollten am ende des projekts mittels einem alert oder einen pop-up angezeigt werden.
 
 desktopPath = "C:\\Users\\hvb63\\OneDrive\\Desktop"
+desktopPathRAW = 'C:\\Users\\hvb63\\OneDrive\\Desktop'
 
 def createShortcut(ps1FilePath,targetFolder):
     """
