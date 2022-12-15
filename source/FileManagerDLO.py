@@ -26,7 +26,6 @@ ps1FilePath = ps.process(ps1FilePath)
 sourceRAW = input("Source Path: ")
 sourceFormatted = ps.process(sourceRAW)
 
-
 def createShortcut(ps1FilePath,targetFolder):
     """
     create a shortcut for every file in the "targetFolder" on the desktop\n
