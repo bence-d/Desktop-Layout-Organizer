@@ -8,15 +8,6 @@ preset = "default"
 # Set the directory where the files are located
 directory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
 
-# Check if the directories exist
-if os.path.exists(directory) and os.path.exists(os.path.join(directory, "Presets")) and os.path.exists(os.path.join(directory, "Repository")):
-    # Call the main function
-    main()
-else:
-    # Create the directories
-    os.makedirs(os.path.join(directory, "Presets"))
-    os.makedirs(os.path.join(directory, "Repository"))
-
 def main():
     while True:
         # Clear the screen
@@ -74,4 +65,19 @@ def save_preset():
     # Delete the existing preset file
     os.remove(os.path.join(directory, "Presets", preset + ".reg"))
     # Export the registry key to the Presets directory
-    subprocess.call(f"reg export HKEY_CURRENT_USER)
+    subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(directory, 'Presets', preset)}.reg", shell=True)
+
+def load_preset():
+    return
+
+def delete_preset():
+    return
+
+# Check if the directories exist
+if os.path.exists(directory) and os.path.exists(os.path.join(directory, "Presets")) and os.path.exists(os.path.join(directory, "Repository")):
+    # Call the main function
+    main()
+else:
+    # Create the directories
+    os.makedirs(os.path.join(directory, "Presets"))
+    os.makedirs(os.path.join(directory, "Repository"))
