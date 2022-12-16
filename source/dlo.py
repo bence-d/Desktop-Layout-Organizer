@@ -68,9 +68,22 @@ def save_preset():
     subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(directory, 'Presets', preset)}.reg", shell=True)
 
 def load_preset():
+    global preset
+    presetFileName = os.path.join(directory, "Presets", preset + ".reg")
+    subprocess.call(['reg', 'import', presetFileName])
+    os.system("taskkill /im explorer.exe /F")
+    subprocess.call(['start', 'explorer'])
     return
 
 def delete_preset():
+    global preset
+    # Change to the Presets directory
+    os.chdir(os.path.join(directory, "Presets"))
+    # List the files in the directory
+    print(os.listdir())
+    presetToDelete = input("Preset name: ")
+    os.remove(presetToDelete + ".reg")
+    input("Press enter to continue...")
     return
 
 # Check if the directories exist
