@@ -72,7 +72,7 @@ def load_preset():
     presetFileName = os.path.join(directory, "Presets", preset + ".reg")
     subprocess.call(['reg', 'import', presetFileName])
     os.system("taskkill /im explorer.exe /F")
-    subprocess.call(['start', 'explorer'])
+    subprocess.Popen(['explorer'], shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
     return
 
 def delete_preset():
