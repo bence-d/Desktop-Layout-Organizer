@@ -26,6 +26,7 @@ ps1FilePath = ps.process(ps1FilePath)
 sourceRAW = input("Source Path: ")
 sourceFormatted = ps.process(sourceRAW)
 
+# Methods
 
 def createShortcut(ps1FilePath,targetFolder):
     """
@@ -78,7 +79,6 @@ def moveFile(objectBeingMoved,targetPath):
     shutil.move(objectBeingMoved, targetPath)
 
     print("-> Succesfully moved file") 
-
 
 ## testen für createshortcut
 createShortcut(ps1FilePath, sourceRAW) 
