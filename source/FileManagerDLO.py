@@ -4,31 +4,14 @@ import sys
 import os
 import stringProcessor
 
-# alle print statements sollten am ende des projekts mittels einem alert oder einen pop-up angezeigt werden.
+# alle print oder input statements sollten am ende des projekts mittels einem alert oder einen pop-up angezeigt werden.
 
-# Initializing Variables
-
-ps = stringProcessor.PSStringProcessor()
-
-# Declaring Paths
-
-## Destination
-desktopPath = input("Destination Folder: ")
-
-## PowerShell
+# PowerShell.exe Path that contains all the Powershell commands necessary for creating a Shortcut
 powerShellExePath = "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
-
-## PowerShell Script
-ps1FilePath = input("PowerShell Script Path: ")
-ps1FilePath = ps.process(ps1FilePath)
-
-## Source (the files that the shortcuts will be made for)
-sourceRAW = input("Source Path: ")
-sourceFormatted = ps.process(sourceRAW)
 
 # Methods
 
-def createShortcut(ps1FilePath,targetFolder):
+def createShortcut(destinationFolder,ps1FilePath,sourcePath):
     """
     create a shortcut for every file in the "targetFolder" on the desktop\n
     "ps1FilePath" is the path of the powerShellScript (.ps1) which runs all the commands used for creating a shortcut\n
@@ -36,10 +19,12 @@ def createShortcut(ps1FilePath,targetFolder):
         folderpath -> a shortcut for every file in the folder\n
         filepath -> a shortcut for the file
     """
+    sourceFormatted = ps.process(sourcePath)
+    ps1FilePath = ps.process(ps1FilePath)
 
     try:
         #all entries of the targetFolder
-        entries = os.listdir(sourceRAW)
+        entries = os.listdir(sourcePath)
     except:
         print("-> File can not be found")
         exit()
@@ -52,7 +37,7 @@ def createShortcut(ps1FilePath,targetFolder):
 
         ## Parameters being sent to the PowerShell Script to create a shortcut
         targetFile = '{}\\{}'.format(sourceFormatted,entry)
-        shortcutPath = '{}\\{}.lnk'.format(desktopPath,entry)
+        shortcutPath = '{}\\{}.lnk'.format(destinationFolder,entry)
         
         ## DEBUG
         ## print ( " -> Printing variables used for PS execution..." )
@@ -64,7 +49,7 @@ def createShortcut(ps1FilePath,targetFolder):
         p = subprocess.run([powerShellExePath,ps1FilePath,shortcutPath,targetFile],stdout=sys.stdout)
 
         if p.returncode == 0:
-            print("-> Succesfully created shortcut '" + targetFile +"'")
+            print("-> Succesfully created shortcut for '" + targetFile +"'")
         else:
             print("-> An error as has occured creating the Shortcut")
             exit()
@@ -81,4 +66,17 @@ def moveFile(objectBeingMoved,targetPath):
     print("-> Succesfully moved file") 
 
 ## testen für createshortcut
-createShortcut(ps1FilePath, sourceRAW) 
+# Initializing Variables
+
+ps = stringProcessor.PSStringProcessor()#statisch machen?
+
+destinationFolder = input("Destination Folder: ")
+
+ps1FilePath = input("PowerShell Script Path: ")
+#ps1FilePath = ps.process(ps1FilePath)
+
+# Source (Folder where all the files are located, that should be Shortcutted)
+sourcePath = input("Source Path: ")
+#sourceFormatted = ps.process(sourcePath)
+
+createShortcut(destinationFolder,ps1FilePath,sourcePath) 
