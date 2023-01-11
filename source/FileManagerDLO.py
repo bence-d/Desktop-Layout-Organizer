@@ -19,8 +19,8 @@ def createShortcut(destinationFolder,ps1FilePath,sourcePath):
         folderpath -> a shortcut for every file in the folder\n
         filepath -> a shortcut for the file
     """
-    sourceFormatted = ps.process(sourcePath)
-    ps1FilePath = ps.process(ps1FilePath)
+    sourceFormatted = stringProcessor.process(sourcePath)
+    ps1FilePath = stringProcessor.process(ps1FilePath)
 
     try:
         #all entries of the targetFolder
@@ -68,15 +68,13 @@ def moveFile(objectBeingMoved,targetPath):
 ## testen für createshortcut
 # Initializing Variables
 
-ps = stringProcessor.PSStringProcessor()#statisch machen?
-
+# Destination Folder
 destinationFolder = input("Destination Folder: ")
 
+# Powershell Script that creates the shortcuts
 ps1FilePath = input("PowerShell Script Path: ")
-#ps1FilePath = ps.process(ps1FilePath)
 
 # Source (Folder where all the files are located, that should be Shortcutted)
 sourcePath = input("Source Path: ")
-#sourceFormatted = ps.process(sourcePath)
 
 createShortcut(destinationFolder,ps1FilePath,sourcePath) 
