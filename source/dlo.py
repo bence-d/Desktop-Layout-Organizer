@@ -67,6 +67,7 @@ def save_preset():
     # Export the registry key to the Presets directory
     subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(directory, 'Presets', preset)}.reg", shell=True)
 
+
 def load_preset():
     global preset
     presetFileName = os.path.join(directory, "Presets", preset + ".reg")
