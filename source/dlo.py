@@ -67,7 +67,7 @@ def create_preset():
     if foundPresetInList:
         print("[DLO]: A preset with that name already exists.")
     else: 
-        print("[DLO]: Adding entry... ")
+        print("[DLO]: Adding entry.... ")
     
     input("Press enter to continue...")
     main()
