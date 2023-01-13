@@ -58,9 +58,6 @@ def create_preset():
     with open(presetListFilename) as fp:
         presetList = json.load(fp)
 
-    #f = open(f"{presetListFilename}", "r")
-    #presetList = json.loads(f.read())
-
     # 2 Schauen, ob der Eintrag schon drin ist
 
     foundPresetInList = False
@@ -133,7 +130,39 @@ def delete_preset():
     # List the files in the registry directory
     print(os.listdir())
     presetToDelete = input("Preset name: ")
-    os.remove(presetToDelete + ".reg")
+    #todo enter name preset foreach prüfen und dann löschen
+    
+    with open(presetListFilename) as fp:
+        presetList = json.load(fp)
+
+    for preset in presetList['presets']:
+        if preset['name'] == presetToDelete:
+            
+            list.remove(presetList['presets'],preset)
+            presetsRaw = []
+
+            for preset in presetList['presets']:
+                presetsRaw.append(Preset.to_Preset(preset))
+
+            presets = [obj.to_dict() for obj in presetsRaw]
+            presets.sort(key=lambda obj: obj["name"])
+            presetsJSON = json.dumps({"presets": presets})
+
+            print("\n-> jsdata: " + presetsJSON)
+            filename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\presetlist.json"
+
+            with open(f"{filename}", "r+") as outfile:
+                outfile.truncate(0)
+
+            with open(f"{filename}", "w") as outfile:
+                outfile.write(presetsJSON)
+
+            os.remove(presetToDelete + ".reg") #eintrag wird aus dem Ordner gelöscht
+
+            print("Erfolgreich gelöscht")
+            break
+
+
     input("Press enter to continue...")
     return
 
