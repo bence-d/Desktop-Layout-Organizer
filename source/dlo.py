@@ -1,10 +1,14 @@
+from base64 import encode
+import base64
 import os
 import subprocess
 import sys
 import json
 
+from jsontesting import Preset
+
 # Set the preset to default
-preset = "default"
+presetName = "default"
 
 # Set the directory where the files are located
 registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
@@ -44,15 +48,18 @@ def main():
             print("[DLO] ERROR: Unknown command")
 
 def create_preset():
-    global presetName
+    #global presetName
     presetName = input("Preset name: ")
     # Export the registry key to the registryDirectory
-    subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(registryDirectory, 'Presets', preset)}.reg", shell=True)
+    subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(registryDirectory, 'Presets', presetName)}.reg", shell=True)
     
     # 1 JSON File laden
 
-    f = open(f"{presetListFilename}", "r")
-    presetList = json.loads(f.read())
+    with open(presetListFilename) as fp:
+        presetList = json.load(fp)
+
+    #f = open(f"{presetListFilename}", "r")
+    #presetList = json.loads(f.read())
 
     # 2 Schauen, ob der Eintrag schon drin ist
 
@@ -67,8 +74,28 @@ def create_preset():
     if foundPresetInList:
         print("[DLO]: A preset with that name already exists.")
     else: 
-        print("[DLO]: Adding entry... es sollte da erscheinen ")
-    
+        print("[DLO]: Adding entry...")
+
+        presetsRaw = []
+        for preset in presetList['presets']:
+            presetsRaw.append(Preset.to_Preset(preset))
+
+        presetsRaw.append(
+            Preset(f"{presetName}",
+            f"Description of {presetName}",
+            f"C:\\Users\\Bence\\Desktop\\{presetName}.reg" 
+            ))
+
+        presets = [obj.to_dict() for obj in presetsRaw]
+        presets.sort(key=lambda obj: obj["name"])
+        presetsJSON = json.dumps({"presets": presets})
+        print("\n-> jsdata: " + presetsJSON)
+
+        filename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\presetlist.json"
+
+        with open(f"{filename}", "w") as outfile:
+            outfile.write(presetsJSON)
+
     input("Press enter to continue...")
     main()
 
@@ -88,7 +115,7 @@ def save_preset():
     # Delete the existing preset file
     os.remove(os.path.join(registryDirectory, "Presets", presetName + ".reg"))
     # Export the registry key to the registry directory
-    subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(registryDirectory, 'Presets', preset)}.reg", shell=True)
+    subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(registryDirectory, 'Presets', presetName)}.reg", shell=True)
 
 
 def load_preset():

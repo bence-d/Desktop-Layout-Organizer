@@ -16,6 +16,12 @@ class Preset:
 
     def to_dict(self):
         return {"name": self.name, "description": self.description, "registryLocation": self.registryLocation}
+    
+    def to_Preset(dict):
+        """dict as a parameter
+         \n returns a Preset object with the name,description and registryLocation values
+        """
+        return Preset(dict['name'],dict['description'],dict['registryLocation'])
 
 ### HOW TO SAVE OBJECT ###
 
@@ -62,3 +68,8 @@ for a in fileRead['presets']:
 
 currObj = fileRead['presets'][1]
 print("\n-> currObj: " + currObj['name'])
+
+### TO_PRESET TEST ###
+p1 = Preset.to_Preset(fileRead['presets'][0])
+
+print(p1.name)
