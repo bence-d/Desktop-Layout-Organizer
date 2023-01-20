@@ -1,7 +1,24 @@
-from jsontesting import Preset
 import os
 import subprocess
 import json
+
+class Preset:
+    def __init__(self, name, description, registryLocation):
+        self.name = name
+        self.description = description
+        self.registryLocation = registryLocation
+
+    def toJson(self):
+        return json.dumps(self, default=lambda o: o.__dict__)
+
+    def to_dict(self):
+        return {"name": self.name, "description": self.description, "registryLocation": self.registryLocation}
+    
+    def to_Preset(dict):
+        """dict as a parameter
+         \n returns a Preset object with the name,description and registryLocation values
+        """
+        return Preset(dict['name'],dict['description'],dict['registryLocation'])
 
 class presetmanager:
     # Set the directory where the files are located
