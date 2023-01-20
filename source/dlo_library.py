@@ -21,9 +21,6 @@ class Preset:
         return Preset(dict['name'],dict['description'],dict['registryLocation'])
 
 class presetmanager:
-    # Set the directory where the files are located
-    registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
-    presetListFilename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\PresetList.json"
 
     @staticmethod
     def create_preset(presetName):
@@ -68,6 +65,37 @@ class presetmanager:
 
             with open(f"{presetListFilename}", "w") as outfile:
                 outfile.write(presetsJSON)
+
+    @staticmethod
+    def change_preset(presetName, presetNewName, presetNewDesc):
+        # Set the directory where the files are located
+        registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
+        presetListFilename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\PresetList.json"
+
+        # Change to the registry directory
+        os.chdir(os.path.join(registryDirectory, "Presets"))
+
+        with open(presetListFilename) as fp:
+            presetList = json.load(fp)
+
+            for preset in presetList['presets']:
+                if preset['name'] == presetName:
+
+                    preset['name'] = presetNewName
+                    preset['description'] = presetNewDesc
+
+                    presetsRaw = []
+                    for preset in presetList['presets']:
+                        presetsRaw.append(Preset.to_Preset(preset))
+
+                    presets = [obj.to_dict() for obj in presetsRaw]
+                    presets.sort(key=lambda obj: obj["name"])
+                    presetsJSON = json.dumps({"presets": presets})
+
+                    filename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\presetlist.json"
+
+                    with open(f"{filename}", "w") as outfile:
+                        outfile.write(presetsJSON)
 
     @staticmethod
     def save_preset(presetName):

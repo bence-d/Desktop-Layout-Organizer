@@ -103,6 +103,63 @@ def change_preset():
     # List the files in the registry directory
     print(os.listdir())
     presetName = input("Preset name: ")
+
+    filename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\presetlist.json"
+
+    with open(presetListFilename) as fp:
+        presetList = json.load(fp)
+
+        isFound = False
+
+        for preset in presetList['presets']:
+            if preset['name'] == presetName:
+                isFound = True
+                print("[1] : Change name")
+                print("[2] : Change Description")
+                userInput = int(input("What would you like to change? "))
+
+                if userInput == 1:
+                    preset['name'] = input("Enter the new name:\n")
+
+                    presetsRaw = []
+                    for preset in presetList['presets']:
+                        presetsRaw.append(Preset.to_Preset(preset))
+
+                    presets = [obj.to_dict() for obj in presetsRaw]
+                    presets.sort(key=lambda obj: obj["name"])
+                    presetsJSON = json.dumps({"presets": presets})
+                    print("\n-> jsdata: " + presetsJSON)
+
+                    filename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\presetlist.json"
+
+                    with open(f"{filename}", "w") as outfile:
+                        outfile.write(presetsJSON)
+
+                    break
+                elif userInput == 2:
+                    preset['description'] = input("Enter the new description:\n")
+
+                    presetsRaw = []
+                    for preset in presetList['presets']:
+                        presetsRaw.append(Preset.to_Preset(preset))
+
+                    presets = [obj.to_dict() for obj in presetsRaw]
+                    presets.sort(key=lambda obj: obj["name"])
+                    presetsJSON = json.dumps({"presets": presets})
+                    print("\n-> jsdata: " + presetsJSON)
+
+                    filename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\presetlist.json"
+
+                    with open(f"{filename}", "w") as outfile:
+                        outfile.write(presetsJSON)
+
+                    break
+                else:
+                    print("Wrong input!")
+                    break
+    if not isFound:
+        print(f"There is no such Preset called {presetName}!")
+                    
     input("Press enter to continue...")
     main()
 
