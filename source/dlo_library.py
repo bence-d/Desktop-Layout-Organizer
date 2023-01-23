@@ -167,9 +167,21 @@ class presetmanager:
     def create_directories():
         # Set the directory where the files are located
         registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
+        presetListFilename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\PresetList.json"
         
         # Check if the directories exist
         if not os.path.exists(registryDirectory) or not os.path.exists(os.path.join(registryDirectory, "Presets")) and os.path.exists(os.path.join(registryDirectory, "Repository")):
             # Create the directories
             os.makedirs(os.path.join(registryDirectory, "Presets"))
             os.makedirs(os.path.join(registryDirectory, "Repository"))
+
+        # Check if the 'presetlist.json' File exists
+        if not os.path.exists(presetListFilename):
+            # Feeding the file an empty list
+            emptyList = []
+
+            # Converting Objects into a dictionary
+            presetsJSON = json.dumps({"presets": emptyList})
+
+            with open(f"{presetListFilename}", "w") as outfile:
+                outfile.write(presetsJSON)
