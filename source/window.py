@@ -1,7 +1,8 @@
 import tkinter as tk
 import tkinter.ttk as ttk
+from dlo_library import presetmanager as pmgr
 
-class ChangePresetDialog():
+class DeletePresetDialog():
     windowWidth = 250
     windowHeight = 150
 
@@ -14,10 +15,10 @@ class ChangePresetDialog():
 
     def __init__(self):
         # Elements
-        self.window = tk.Tk(className="Change Preset")
+        self.window = tk.Tk(className="Delete Preset")
 
         # Window Configuration
-        self.window.title("Change Preset")
+        self.window.title("Deleting Preset")
         self.var = tk.StringVar()
         self.window.windowWidth = 250
         self.window.windowHeight = 400
@@ -28,16 +29,54 @@ class ChangePresetDialog():
         self.window.columnconfigure(0, weight=1)
         
         # Window Window Elements
-        self.label = tk.Label(self.window, text="Enter preset name:")
+        self.label = tk.Label(self.window, text="Choose your preset:")
         self.label.grid(column=0, row=0, pady=10)
 
-        self.inputfield = tk.Entry(self.window)
-        self.inputfield.grid(column=0, row=1, pady=10)
+        #self.inputfield = tk.Entry(self.window)
+        #self.inputfield.grid(column=0, row=1, pady=10)
 
-        button = tk.Button(self.window, text="OK", command=self.destroyWindow)
+        # Getting preset list
+
+        presetList = pmgr.get_all_entries()
+        
+        # turning it only to a list of names...
+
+        presetListNames = []
+
+        for actPres in presetList:
+            presetListNames.append(actPres.name)
+
+        # variable that holds value of selection in preset_menu
+        self.value_inside = tk.StringVar(self.window)
+        
+        # Set the default value of the variable
+        self.value_inside.set("[default]")
+
+        preset_menu = tk.OptionMenu(self.window, self.value_inside, *presetListNames)
+        preset_menu.grid(column=0, row=1, pady=10)
+
+        button = tk.Button(self.window, text="OK", command=self.delete_selected_preset)
         button.grid(column=0, row=2, pady=10, ipadx=30)
         
         InputDialog.center_window(self)
+
+    def delete_selected_preset(self):
+        ## delete preset
+        if self.value_inside != "[default]":
+            pmgr.delete_preset(self.value_inside.get())
+
+        ## destroy window
+        self.destroyWindow()
+
+    def destroyWindow(self):
+        self.valueToReturn = self.value_inside.get()
+        self.label.config(text = "value: {}".format(self.var))
+        self.window.destroy()
+
+    def show(self):
+        self.window.deiconify()
+        self.window.wait_window()
+        return self.valueToReturn
 
 class InputDialog():
     windowWidth = 250
@@ -108,11 +147,11 @@ class GUI():
         btn_pr_add.grid(column=1, row=0, pady=10)
         #btn_pr_add.pack()
 
-        btn_pr_ch = tk.Button(text="Change Preset", height=2,width=15)
+        btn_pr_ch = tk.Button(text="Change Preset", height=2,width=15, command=self.change_preset)
         btn_pr_ch.grid(column=1, row=1, pady=10)
         #btn_pr_ch.pack()
 
-        btn_pr_del = tk.Button(text="Delete Preset", height=2,width=15)
+        btn_pr_del = tk.Button(text="Delete Preset", height=2,width=15, command=self.delete_preset)
         btn_pr_del.grid(column=1, row=2, pady=10)
         #btn_pr_del.pack()
 
@@ -141,5 +180,17 @@ class GUI():
         res = InputDialog().show()
         print("-> recieved input: " + res)
         self.label1.configure(text="Current Preset: " + res)
+
+    def change_preset(self):
+        print("-> selecting preset...")
+        #res = ChangePresetDialog().show()
+        #print("-> recieved input: " + res)
+        #self.label1.configure(text="Current Preset: " + res)
+
+    def delete_preset(self):
+        print("-> deleting preset...")
+        res = DeletePresetDialog().show()
+        print("-> recieved input: " + res)
+        self.label1.configure(text="Deleted Preset: " + res)
 
 GUI()
