@@ -24,6 +24,8 @@ class presetmanager:
 
     @staticmethod
     def create_preset(presetName):
+        presetmanager.create_directories()
+
         # Set the directory where the files are located
         registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
         presetListFilename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\PresetList.json"
@@ -68,6 +70,8 @@ class presetmanager:
 
     @staticmethod
     def change_preset(presetName, presetNewName, presetNewDesc):
+        presetmanager.create_directories()
+
         # Set the directory where the files are located
         registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
         presetListFilename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\PresetList.json"
@@ -99,6 +103,8 @@ class presetmanager:
 
     @staticmethod
     def save_preset(presetName):
+        presetmanager.create_directories()
+
         # Set the directory where the files are located
         registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
 
@@ -109,6 +115,8 @@ class presetmanager:
 
     @staticmethod
     def load_preset(presetName):
+        presetmanager.create_directories()
+
         # Set the directory where the files are located
         registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
 
@@ -126,6 +134,8 @@ class presetmanager:
 
     @staticmethod
     def delete_preset(presetToDelete):
+        presetmanager.create_directories()
+
         # Set the directory where the files are located
         registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
         presetListFilename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\PresetList.json"
@@ -164,6 +174,24 @@ class presetmanager:
         return
 
     @staticmethod
+    def get_all_entries():
+        presetmanager.create_directories()
+
+        # Set the directory where the files are located
+        registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
+        presetListFilename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\PresetList.json"
+        
+        f = open(f"{presetListFilename}", "r")
+        jsonlist = json.loads(f.read())
+
+        presets = []
+
+        for preset in jsonlist['presets']:
+            presets.append(Preset.to_Preset(preset))
+        
+        return presets
+
+    @staticmethod
     def create_directories():
         # Set the directory where the files are located
         registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
@@ -185,19 +213,3 @@ class presetmanager:
 
             with open(f"{presetListFilename}", "w") as outfile:
                 outfile.write(presetsJSON)
-
-    @staticmethod
-    def get_all_entries():
-        # Set the directory where the files are located
-        registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
-        presetListFilename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\PresetList.json"
-        
-        f = open(f"{presetListFilename}", "r")
-        jsonlist = json.loads(f.read())
-
-        presets = []
-
-        for preset in jsonlist['presets']:
-            presets.append(Preset.to_Preset(preset))
-        
-        return presets
