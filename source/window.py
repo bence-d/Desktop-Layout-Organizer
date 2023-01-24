@@ -286,7 +286,7 @@ class GUI():
         btn_pr_load = tk.Button(text="Load Preset", height=2, width=15, command=self.load_preset)
         btn_pr_load.grid(column=1, row=3, pady=10)
 
-        btn_pr_sv = tk.Button(text="Save Preset", height=2, width=15)
+        btn_pr_sv = tk.Button(text="Save Preset", height=2, width=15, command=self.save_preset)
         btn_pr_sv.grid(column=1, row=4, pady=10)
 
         inputField = tk.Entry()
@@ -332,6 +332,12 @@ class GUI():
         if self.currentPreset != "default":
             pmgr.load_preset(self.currentPreset)
             print("-> loaded preset...")
+
+    def save_preset(self):
+        print("-> saving preset...")
+        if self.currentPreset != "default":
+            pmgr.save_preset(self.currentPreset)
+            print("-> saved preset...")
 
     def refreshPresetLabel(self):
         self.label1.config(text="Current Preset: " + self.currentPreset)
