@@ -61,7 +61,6 @@ class CreatePresetDialog():
         self.window.wait_window()
         return self.valueToReturn
 
-
 class ChangePresetDialog():
     windowWidth = 250
     windowHeight = 150
@@ -258,6 +257,7 @@ class InputDialog():
         return self.valueToReturn
 
 class GUI():
+    currentPreset = "default"
     def __init__(self):
 
         # Elements
@@ -283,7 +283,7 @@ class GUI():
         btn_pr_del.grid(column=1, row=2, pady=10)
         #btn_pr_del.pack()
 
-        btn_pr_load = tk.Button(text="Load Preset", height=2, width=15)
+        btn_pr_load = tk.Button(text="Load Preset", height=2, width=15, command=self.load_preset)
         btn_pr_load.grid(column=1, row=3, pady=10)
 
         btn_pr_sv = tk.Button(text="Save Preset", height=2, width=15)
@@ -307,14 +307,16 @@ class GUI():
         print("-> creating new preset...")
         res = CreatePresetDialog().show()
         print("-> recieved input: " + res)
-        self.label1.configure(text="Current Preset: " + res)
+        self.currentPreset = res
+        self.refreshPresetLabel()
 
     def change_preset(self):
         print("-> selecting preset...")
         res = ChangePresetDialog().show()
         print("-> recieved input: " + res)
         if res != "[preset]":
-            self.label1.configure(text="Current Preset: " + res)
+            self.currentPreset = res
+            self.refreshPresetLabel()
         else:
             self.label1.configure(text="keine Vorlage ausgewählt")
 
@@ -323,5 +325,15 @@ class GUI():
         res = DeletePresetDialog().show()
         print("-> recieved input: " + res)
         self.label1.configure(text="Deleted Preset: " + res)
+        self.refreshPresetLabel()
+
+    def load_preset(self):
+        print("-> loading preset...")
+        if self.currentPreset != "default":
+            pmgr.load_preset(self.currentPreset)
+            print("-> loaded preset...")
+
+    def refreshPresetLabel(self):
+        self.label1.config(text="Current Preset: " + self.currentPreset)
 
 GUI()
