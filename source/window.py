@@ -48,7 +48,7 @@ class CreatePresetDialog():
         InputDialog.center_window(self)
 
     def createPreset(self):
-        pmgr.create_preset(self.input_name.get())
+        pmgr.create_preset(self.input_name.get(), self.input_desc.get())
         self.destroyWindow()
 
     def destroyWindow(self):
