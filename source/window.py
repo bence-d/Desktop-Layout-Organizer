@@ -97,13 +97,17 @@ class ChangePresetDialog():
         # Getting preset list
 
         presetList = pmgr.get_all_entries()
-        
-        # turning it only to a list of names...
 
+        # turning it only to a list of names...
         presetListNames = []
 
-        for actPres in presetList:
-            presetListNames.append(actPres.name)
+        self.presetsSaved = True
+        if presetList:
+            for actPres in presetList:
+                presetListNames.append(actPres.name)
+        else:
+            presetListNames.append('<no presets saved>')
+            self.presetsSaved = False
 
         # variable that holds value of selection in preset_menu
         self.value_inside = tk.StringVar(self.window)
@@ -112,6 +116,12 @@ class ChangePresetDialog():
         self.value_inside.set("[preset]")
 
         preset_menu = tk.OptionMenu(self.window, self.value_inside, *presetListNames)
+
+        if not self.presetsSaved:
+            self.value_inside.set("<no presets saved>")
+            preset_menu = tk.OptionMenu(self.window, self.value_inside, *presetListNames)
+            preset_menu.configure(state="disabled")
+
         preset_menu.grid(column=0, row=1, pady=10)
 
         button = tk.Button(self.window, text="OK", command=self.destroyWindow)
@@ -170,8 +180,13 @@ class DeletePresetDialog():
 
         presetListNames = []
 
-        for actPres in presetList:
-            presetListNames.append(actPres.name)
+        self.presetsSaved = True
+        if presetList:
+            for actPres in presetList:
+                presetListNames.append(actPres.name)
+        else:
+            presetListNames.append('<no presets saved>')
+            self.presetsSaved = False
 
         # variable that holds value of selection in preset_menu
         self.value_inside = tk.StringVar(self.window)
@@ -180,6 +195,11 @@ class DeletePresetDialog():
         self.value_inside.set("[default]")
 
         preset_menu = tk.OptionMenu(self.window, self.value_inside, *presetListNames)
+        if not self.presetsSaved:
+            self.value_inside.set("<no presets saved>")
+            preset_menu = tk.OptionMenu(self.window, self.value_inside, *presetListNames)
+            preset_menu.configure(state="disabled")
+
         preset_menu.grid(column=0, row=1, pady=10)
 
         button = tk.Button(self.window, text="OK", command=self.delete_selected_preset)
@@ -314,7 +334,7 @@ class GUI():
         # print("-> selecting preset...")
         res = ChangePresetDialog().show()
         # print("-> recieved input: " + res)
-        if res != "[preset]":
+        if res != "[preset]" and res != "<no presets saved>":
             self.currentPreset = res
             self.refreshPresetLabel()
         else:
