@@ -48,7 +48,7 @@ class CreatePresetDialog():
         InputDialog.center_window(self)
 
     def createPreset(self):
-        pmgr.create_preset(self.input_name.get())
+        pmgr.create_preset(self.input_name.get(), self.input_desc.get())
         self.destroyWindow()
 
     def destroyWindow(self):
@@ -97,13 +97,17 @@ class ChangePresetDialog():
         # Getting preset list
 
         presetList = pmgr.get_all_entries()
-        
-        # turning it only to a list of names...
 
+        # turning it only to a list of names...
         presetListNames = []
 
-        for actPres in presetList:
-            presetListNames.append(actPres.name)
+        self.presetsSaved = True
+        if presetList:
+            for actPres in presetList:
+                presetListNames.append(actPres.name)
+        else:
+            presetListNames.append('<no presets saved>')
+            self.presetsSaved = False
 
         # variable that holds value of selection in preset_menu
         self.value_inside = tk.StringVar(self.window)
@@ -112,6 +116,12 @@ class ChangePresetDialog():
         self.value_inside.set("[preset]")
 
         preset_menu = tk.OptionMenu(self.window, self.value_inside, *presetListNames)
+
+        if not self.presetsSaved:
+            self.value_inside.set("<no presets saved>")
+            preset_menu = tk.OptionMenu(self.window, self.value_inside, *presetListNames)
+            preset_menu.configure(state="disabled")
+
         preset_menu.grid(column=0, row=1, pady=10)
 
         button = tk.Button(self.window, text="OK", command=self.destroyWindow)
@@ -170,8 +180,13 @@ class DeletePresetDialog():
 
         presetListNames = []
 
-        for actPres in presetList:
-            presetListNames.append(actPres.name)
+        self.presetsSaved = True
+        if presetList:
+            for actPres in presetList:
+                presetListNames.append(actPres.name)
+        else:
+            presetListNames.append('<no presets saved>')
+            self.presetsSaved = False
 
         # variable that holds value of selection in preset_menu
         self.value_inside = tk.StringVar(self.window)
@@ -180,6 +195,11 @@ class DeletePresetDialog():
         self.value_inside.set("[default]")
 
         preset_menu = tk.OptionMenu(self.window, self.value_inside, *presetListNames)
+        if not self.presetsSaved:
+            self.value_inside.set("<no presets saved>")
+            preset_menu = tk.OptionMenu(self.window, self.value_inside, *presetListNames)
+            preset_menu.configure(state="disabled")
+
         preset_menu.grid(column=0, row=1, pady=10)
 
         button = tk.Button(self.window, text="OK", command=self.delete_selected_preset)
@@ -291,7 +311,7 @@ class GUI():
 
         inputField = tk.Entry()
 
-        self.label1 = tk.Label(text="Current Preset: Default")
+        self.label1 = tk.Label(text="keine Vorlage ausgewählt")
         self.label1.grid(column=1, row=5, pady=10)
 
         self.center_window()
@@ -304,42 +324,47 @@ class GUI():
         self.window.geometry('{}x{}+{}+{}'.format(self.windowWidth, self.windowHeight, x, y))
 
     def new_preset(self):
-        print("-> creating new preset...")
+        # print("-> creating new preset...")
         res = CreatePresetDialog().show()
-        print("-> recieved input: " + res)
+        # print("-> recieved input: " + res)
         self.currentPreset = res
         self.refreshPresetLabel()
 
     def change_preset(self):
-        print("-> selecting preset...")
+        # print("-> selecting preset...")
         res = ChangePresetDialog().show()
-        print("-> recieved input: " + res)
-        if res != "[preset]":
+        # print("-> recieved input: " + res)
+        if res != "[preset]" and res != "<no presets saved>":
             self.currentPreset = res
             self.refreshPresetLabel()
         else:
-            self.label1.configure(text="keine Vorlage ausgewählt")
+            self.currentPreset = "default"
+            self.refreshPresetLabel()
 
     def delete_preset(self):
-        print("-> deleting preset...")
+        # print("-> deleting preset...")
         res = DeletePresetDialog().show()
-        print("-> recieved input: " + res)
-        self.label1.configure(text="Deleted Preset: " + res)
-        self.refreshPresetLabel()
+        # print("-> recieved input: " + res)
+        if res == self.currentPreset:
+            self.currentPreset = "default"
+            self.refreshPresetLabel()
 
     def load_preset(self):
-        print("-> loading preset...")
+        # print("-> loading preset...")
         if self.currentPreset != "default":
             pmgr.load_preset(self.currentPreset)
-            print("-> loaded preset...")
+            # print("-> loaded preset...")
 
     def save_preset(self):
-        print("-> saving preset...")
+        # print("-> saving preset...")
         if self.currentPreset != "default":
             pmgr.save_preset(self.currentPreset)
-            print("-> saved preset...")
+            # print("-> saved preset...")
 
     def refreshPresetLabel(self):
-        self.label1.config(text="Current Preset: " + self.currentPreset)
+        if self.currentPreset == "default":
+            self.label1.config(text="keine Vorlage ausgewählt")
+        else:
+            self.label1.config(text="Current Preset: " + self.currentPreset)
 
 GUI()

@@ -24,7 +24,7 @@ class Preset:
 class presetmanager:
 
     @staticmethod
-    def create_preset(presetName):
+    def create_preset(presetName, presetDescription):
         presetmanager.create_directories()
 
         # Set the directory where the files are located
@@ -67,9 +67,8 @@ class presetmanager:
             # Adding the new entry to the 'presetlist.json'
             presetsRaw.append(
                 Preset(f"{presetName}",
-                f"Description of {presetName}",
-                f"C:\\Users\\Bence\\Desktop\\{presetName}.reg",
-                files
+                f"{presetDescription}",
+                f"C:\\Users\\Bence\\Desktop\\{presetName}.reg" 
                 ))
 
             # Converting Objects into a dictionary
