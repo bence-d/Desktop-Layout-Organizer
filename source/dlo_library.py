@@ -3,22 +3,23 @@ import subprocess
 import json
 
 class Preset:
-    def __init__(self, name, description, registryLocation):
+    def __init__(self, name, description, registryLocation, files):
         self.name = name
         self.description = description
         self.registryLocation = registryLocation
+        self.files = files
 
     def toJson(self):
         return json.dumps(self, default=lambda o: o.__dict__)
 
     def to_dict(self):
-        return {"name": self.name, "description": self.description, "registryLocation": self.registryLocation}
+        return {"name": self.name, "description": self.description, "registryLocation": self.registryLocation, "files": self.files}
     
     def to_Preset(dict):
         """dict as a parameter
          \n returns a Preset object with the name,description and registryLocation values
         """
-        return Preset(dict['name'],dict['description'],dict['registryLocation'])
+        return Preset(dict['name'],dict['description'],dict['registryLocation'],dict['files'])
 
 class presetmanager:
 
@@ -29,6 +30,7 @@ class presetmanager:
         # Set the directory where the files are located
         registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
         presetListFilename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\PresetList.json"
+        desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop') # Getting the desktop path
 
         # 1: Export the registry key to the registryDirectory
         subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(registryDirectory, 'Presets', presetName)}.reg", shell=True)
@@ -52,6 +54,15 @@ class presetmanager:
             presetsRaw = []
             for preset in presetList['presets']:
                 presetsRaw.append(Preset.to_Preset(preset))
+
+            # Getting the files from the desktop
+            file_list = [f for f in os.listdir(desktop_path) ]
+            file_paths = [os.path.join(desktop_path, f) for f in file_list]
+            
+            #Adding files to the preset
+            files = [] 
+            for filepath in file_paths:
+                files.append({"path": filepath, "name": os.path.basename(filepath)})
 
             # Adding the new entry to the 'presetlist.json'
             presetsRaw.append(
