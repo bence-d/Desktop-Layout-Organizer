@@ -291,7 +291,7 @@ class GUI():
 
         inputField = tk.Entry()
 
-        self.label1 = tk.Label(text="Current Preset: Default")
+        self.label1 = tk.Label(text="keine Vorlage ausgewählt")
         self.label1.grid(column=1, row=5, pady=10)
 
         self.center_window()
@@ -304,42 +304,47 @@ class GUI():
         self.window.geometry('{}x{}+{}+{}'.format(self.windowWidth, self.windowHeight, x, y))
 
     def new_preset(self):
-        print("-> creating new preset...")
+        # print("-> creating new preset...")
         res = CreatePresetDialog().show()
-        print("-> recieved input: " + res)
+        # print("-> recieved input: " + res)
         self.currentPreset = res
         self.refreshPresetLabel()
 
     def change_preset(self):
-        print("-> selecting preset...")
+        # print("-> selecting preset...")
         res = ChangePresetDialog().show()
-        print("-> recieved input: " + res)
+        # print("-> recieved input: " + res)
         if res != "[preset]":
             self.currentPreset = res
             self.refreshPresetLabel()
         else:
-            self.label1.configure(text="keine Vorlage ausgewählt")
+            self.currentPreset = "default"
+            self.refreshPresetLabel()
 
     def delete_preset(self):
-        print("-> deleting preset...")
+        # print("-> deleting preset...")
         res = DeletePresetDialog().show()
-        print("-> recieved input: " + res)
-        self.label1.configure(text="Deleted Preset: " + res)
-        self.refreshPresetLabel()
+        # print("-> recieved input: " + res)
+        if res == self.currentPreset:
+            self.currentPreset = "default"
+            self.refreshPresetLabel()
 
     def load_preset(self):
-        print("-> loading preset...")
+        # print("-> loading preset...")
         if self.currentPreset != "default":
             pmgr.load_preset(self.currentPreset)
-            print("-> loaded preset...")
+            # print("-> loaded preset...")
 
     def save_preset(self):
-        print("-> saving preset...")
+        # print("-> saving preset...")
         if self.currentPreset != "default":
             pmgr.save_preset(self.currentPreset)
-            print("-> saved preset...")
+            # print("-> saved preset...")
 
     def refreshPresetLabel(self):
-        self.label1.config(text="Current Preset: " + self.currentPreset)
+        if self.currentPreset == "default":
+            self.label1.config(text="keine Vorlage ausgewählt")
+        else:
+            self.label1.config(text="Current Preset: " + self.currentPreset)
 
 GUI()
