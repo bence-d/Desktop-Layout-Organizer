@@ -25,59 +25,65 @@ class presetmanager:
 
     @staticmethod
     def create_preset(presetName, presetDescription):
+        '''
+        Creates a new preset with given presetName and Description\n
+        presetName: Name of the preset\n
+        presetDescription: Description of the preset
+        '''
         presetmanager.create_directories()
 
         # Set the directory where the files are located
         registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
         presetListFilename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\PresetList.json"
         desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop') # Getting the desktop path
+        presetsRaw = []
 
         # 1: Export the registry key to the registryDirectory
         subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(registryDirectory, 'Presets', presetName)}.reg", shell=True)
         
         # 2: load the .json file that stores the presets
-        with open(presetListFilename) as fp:
-            presetList = json.load(fp)
+        if presetmanager.fileIsEmpty(presetListFilename) != True:
+            with open(presetListFilename) as fp:
+                presetList = json.load(fp)
 
-        # 3: check if given preset is included in the 'presetlist.json' file
-        foundPresetInList = False
-        for actPreset in presetList['presets']:
-            if actPreset['name'] == presetName:
-                foundPresetInList = True
-                break
+            # 3: check if given preset is included in the 'presetlist.json' file
+            foundPresetInList = False
+            for actPreset in presetList['presets']:
+                if actPreset['name'] == presetName:
+                    foundPresetInList = True
+                    break
 
-        # 3 Wenn schon drin ist, Fehler zurückgeben, ansonsten Eintrag hinzufügen
-        # 4: if a preset with the given name is already saved in the 'presetlist.json' file
-        # return an error, otherwise add it to the file
-        if not foundPresetInList:
-            # Turning dictionary into a list
-            presetsRaw = []
-            for preset in presetList['presets']:
-                presetsRaw.append(Preset.to_Preset(preset))
+            # 3 Wenn schon drin ist, Fehler zurückgeben, ansonsten Eintrag hinzufügen
+            # 4: if a preset with the given name is already saved in the 'presetlist.json' file
+            # return an error, otherwise add it to the file
+            if not foundPresetInList:
+                # Turning dictionary into a list
+                for preset in presetList['presets']:
+                    presetsRaw.append(Preset.to_Preset(preset))
 
-            # Getting the files from the desktop
-            file_list = [f for f in os.listdir(desktop_path) ]
-            file_paths = [os.path.join(desktop_path, f) for f in file_list]
+        # Getting the files from the desktop
+        file_list = [f for f in os.listdir(desktop_path) ]
+        file_paths = [os.path.join(desktop_path, f) for f in file_list]
             
-            #Adding files to the preset
-            files = [] 
-            for filepath in file_paths:
-                files.append({"path": filepath, "name": os.path.basename(filepath)})
+        #Adding files to the preset
+        files = [] 
+        for filepath in file_paths:
+            files.append({"path": filepath, "name": os.path.basename(filepath)})
 
-            # Adding the new entry to the 'presetlist.json'
-            presetsRaw.append(
-                Preset(f"{presetName}",
-                f"{presetDescription}",
-                f"C:\\Users\\Bence\\Desktop\\{presetName}.reg" 
-                ))
+        # Adding the new entry to the 'presetlist.json'
+        presetsRaw.append(
+            Preset(f"{presetName}",
+            f"{presetDescription}",
+            f"C:\\Users\\Bence\\Desktop\\{presetName}.reg",
+            files)) 
 
-            # Converting Objects into a dictionary
-            presets = [obj.to_dict() for obj in presetsRaw]
-            presets.sort(key=lambda obj: obj["name"])
-            presetsJSON = json.dumps({"presets": presets})
+        # Converting Objects into a dictionary
+        presets = [obj.to_dict() for obj in presetsRaw]
+        presets.sort(key=lambda obj: obj["name"])
+        presetsJSON = json.dumps({"presets": presets})
 
-            with open(f"{presetListFilename}", "w") as outfile:
-                outfile.write(presetsJSON)
+        with open(f"{presetListFilename}", "w") as outfile:
+            outfile.write(presetsJSON)
 
     @staticmethod
     def change_preset(presetName, presetNewName, presetNewDesc):
@@ -224,3 +230,12 @@ class presetmanager:
 
             with open(f"{presetListFilename}", "w") as outfile:
                 outfile.write(presetsJSON)
+  
+    @staticmethod
+    def fileIsEmpty(filename):
+        '''
+        Checks if a file is empty by confirming that its size is 0 bytes\n
+        :param filename: The file to check\n
+        :return: True if the file is empty, False otherwise\n
+        '''
+        return os.stat(filename).st_size == 0
