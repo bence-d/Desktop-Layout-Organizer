@@ -1,0 +1,16 @@
+import os
+import dlo_library as dlo
+import json
+
+filepath = "C:\\Users\\hvb63\\Desktop\\testmove1.txt" 
+registryDirectory = "C:\\Users\\hvb63\\Desktop\\testfolder\\testmove1.txt"
+#desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop')
+
+#dlo.presetmanager.create_preset("presetTest", "presetDescription")
+
+os.rename(filepath,registryDirectory)
+
+#move  file to  folder
+#os.rename(filepath,registryDirectory)
+
+

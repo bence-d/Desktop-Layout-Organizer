@@ -1,0 +1,8 @@
+import os
+import dlo_library as dlo
+import json
+
+#file_path = "C:\\Users\\hvb63\\AppData\\Local\\DLO\\Presets\\presetlist.json" 
+#desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop')
+
+dlo.presetmanager.create_preset("presetTest")
