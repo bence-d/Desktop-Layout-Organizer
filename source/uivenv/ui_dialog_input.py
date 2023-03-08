@@ -1,3 +1,7 @@
+import tkinter as tk
+import tkinter.ttk as ttk
+import sv_ttk
+
 class InputDialog:
     # root window is the window that called this class
     @staticmethod

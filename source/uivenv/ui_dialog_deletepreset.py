@@ -1,7 +1,7 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 from pathlib import Path
-from presetmanager import presetmanager as pmgr
+from dlo_library import presetmanager as pmgr
 from ui_dialog_input import InputDialog
 
 class DeletePreset():

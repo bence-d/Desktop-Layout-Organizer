@@ -2,7 +2,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 import sv_ttk
 from pathlib import Path
-from presetmanager import presetmanager as pmgr
+from dlo_library import presetmanager as pmgr
 from ui_dialog_input import InputDialog
 from ui_dialog_createpreset import CreatePreset
 from ui_dialog_changepreset import ChangePreset
