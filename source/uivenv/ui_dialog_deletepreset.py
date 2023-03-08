@@ -2,18 +2,10 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from pathlib import Path
 from dlo_library import presetmanager as pmgr
-from ui_dialog_inputdialog import InputDialog
+from ui_dialog_input import InputDialog
 
 class DeletePreset():
-    windowWidth = 250
-    windowHeight = 150
-
-    def center_window(self):
-        x = (self.window.winfo_screenwidth() // 2) - (self.windowWidth // 2)
-        y = (self.window.winfo_screenheight() // 2) - (self.windowHeight // 2) -50
-        self.window.geometry('{}x{}+{}+{}'.format(self.windowWidth, self.windowHeight, x, y))
-
-    valueToReturn = ""
+    presetToDelete = ""
 
     def __init__(self):
         # Elements
@@ -23,7 +15,7 @@ class DeletePreset():
         self.window.title("Deleting Preset")
         self.var = tk.StringVar()
         self.window.windowWidth = 250
-        self.window.windowHeight = 400
+        self.window.windowHeight = 150
         self.window.geometry("{}x{}".format(self.window.windowWidth, self.window.windowHeight))
         self.window.resizable(0, 0)
 
@@ -79,7 +71,7 @@ class DeletePreset():
         self.destroyWindow()
 
     def destroyWindow(self):
-        self.valueToReturn = self.value_inside.get()
+        self.presetToDelete = self.value_inside.get()
         self.label.config(text = "value: {}".format(self.var))
         self.window.destroy()
 
@@ -90,4 +82,4 @@ class DeletePreset():
         self.window.mainloop()
         self.window.deiconify()
         self.window.wait_window()
-        return self.valueToReturn
+        return self.presetToDelete
