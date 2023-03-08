@@ -2,18 +2,10 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from pathlib import Path
 from dlo_library import presetmanager as pmgr
-from ui_dialog_inputdialog import InputDialog
+from ui_dialog_input import InputDialog
 
 class ChangePreset():
-    windowWidth = 250
-    windowHeight = 150
-
-    def center_window(self):
-        x = (self.window.winfo_screenwidth() // 2) - (self.windowWidth // 2)
-        y = (self.window.winfo_screenheight() // 2) - (self.windowHeight // 2) -50
-        self.window.geometry('{}x{}+{}+{}'.format(self.windowWidth, self.windowHeight, x, y))
-
-    valueToReturn = ""
+    response = ""
 
     def __init__(self):
         # Elements
@@ -23,7 +15,7 @@ class ChangePreset():
         self.window.title("Preset Selector")
         self.var = tk.StringVar()
         self.window.windowWidth = 250
-        self.window.windowHeight = 400
+        self.window.windowHeight = 150
         self.window.geometry("{}x{}".format(self.window.windowWidth, self.window.windowHeight))
         self.window.resizable(0, 0)
 
@@ -50,14 +42,14 @@ class ChangePreset():
             self.presetsSaved = False
 
         # variable that holds value of selection in preset_menu
-        self.value_inside = tk.StringVar(self.window, " ")
+        self.selectedOption = tk.StringVar(self.window, " ")
 
-        preset_menu = ttk.OptionMenu(self.window, self.value_inside, *presetListNames)
+        preset_menu = ttk.OptionMenu(self.window, self.selectedOption, *presetListNames)
 
         if not self.presetsSaved:
             presetListNames = []
             presetListNames.append("<no presets saved>   ")
-            preset_menu = ttk.OptionMenu(self.window, self.value_inside, *presetListNames)
+            preset_menu = ttk.OptionMenu(self.window, self.selectedOption, *presetListNames)
             preset_menu.configure(state="disabled")
 
         preset_menu.grid(column=0, row=1, pady=10)
@@ -68,7 +60,7 @@ class ChangePreset():
         InputDialog.center_window(self)
 
     def destroyWindow(self):
-        self.valueToReturn = self.value_inside.get()
+        self.response = self.selectedOption.get()
         self.label.config(text = "value: {}".format(self.var))
         self.window.destroy()
 
@@ -78,5 +70,5 @@ class ChangePreset():
         self.window.tk.call("set_theme", "light")
         self.window.deiconify()
         self.window.wait_window()
-        print("RETURNING: " + self.valueToReturn)
-        return self.valueToReturn
+        print("RETURNING: " + self.response)
+        return self.response
