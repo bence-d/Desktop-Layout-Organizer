@@ -1,6 +1,8 @@
 import os
+import shutil
 import subprocess
 import json
+import win32com.client # pip install pywin32
 
 class Preset:
     def __init__(self, name, description, registryLocation, files):
@@ -68,6 +70,14 @@ class presetmanager:
         #Adding files to the preset
         files = [] 
         for filepath in file_paths:
+            #copy files to repository and then delete them from desktop
+
+            if os.path.splitext(filepath)[1] == ".lnk":
+                print()
+            else:
+                filepath = shutil.copy(filepath,os.path.join(registryDirectory, 'Repository', presetName))
+                os.remove(filepath)
+
             files.append({"path": filepath, "name": os.path.basename(filepath)})
 
         # Adding the new entry to the 'presetlist.json'
@@ -239,3 +249,15 @@ class presetmanager:
         :return: True if the file is empty, False otherwise\n
         '''
         return os.stat(filename).st_size == 0
+    
+    @staticmethod
+    def return_shortcut_target(shortcut_path):
+        '''
+        Returns the target of a shortcut (.lnk)\n
+        :param shortcut_path: The path to the shortcut\n
+        :return: The target of the shortcut\n
+        '''
+
+        shell = win32com.client.Dispatch("WScript.Shell")
+        shortcut = shell.CreateShortCut(shortcut_path)
+        return shortcut.Targetpath
