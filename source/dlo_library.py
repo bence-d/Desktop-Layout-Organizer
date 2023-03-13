@@ -73,7 +73,7 @@ class presetmanager:
             #copy files to repository and then delete them from desktop
 
             if os.path.splitext(filepath)[1] == ".lnk":
-                print()
+                print() #hier weitermachen (target path auslesen und dann kopieren methode ganz unten geschrieben)
             else:
                 filepath = shutil.copy(filepath,os.path.join(registryDirectory, 'Repository', presetName))
                 os.remove(filepath)
