@@ -28,7 +28,7 @@ class Preset:
 presetsRaw =  [
     Preset("Preset1", "Description of Preset1", "C:\\Users\\Bence\\Desktop\\preset1.reg"), 
     Preset("Preset2", "Description of Preset2", "C:\\Users\\Bence\\Desktop\\preset2.reg"),
-    Preset("Preset3", "Description of Preset1", "C:\\Users\\Bence\\Desktop\\preset3.reg")
+    Preset("Preset3", "Description of Preset3", "C:\\Users\\Bence\\Desktop\\preset3.reg")
 ]
 
 ### HOW TO SERIALIZE OBJECT ###
