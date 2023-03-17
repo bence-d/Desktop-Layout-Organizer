@@ -7,21 +7,27 @@ import stringProcessor
 import win32com.client # pip install pywin32
 
 class Preset:
-    def __init__(self, name, description, registryLocation, files):
+    def __init__(self, name:str, description:str, registryLocation:str, files:list):
         self.name = name
         self.description = description
         self.registryLocation = registryLocation
         self.files = files
 
     def toJson(self):
+        '''
+        Returns the object as a json string
+        '''
         return json.dumps(self, default=lambda o: o.__dict__)
 
     def to_dict(self):
+        '''
+        Returns the object as a dictionary
+        '''
         return {"name": self.name, "description": self.description, "registryLocation": self.registryLocation, "files": self.files}
     
-    def to_Preset(dict):
-        """dict as a parameter
-         \n returns a Preset object with the name,description and registryLocation values
+    def to_Preset(dict:dict):
+        """
+        returns a Preset object with the name,description and registryLocation values
         """
         return Preset(dict['name'],dict['description'],dict['registryLocation'],dict['files'])
 
@@ -41,7 +47,7 @@ class presetmanager:
 
 
     @staticmethod
-    def create_preset(presetName, presetDescription):
+    def create_preset(presetName:str, presetDescription:str):
         '''
         Creates a new preset with given presetName and Description\n
         presetName: Name of the preset\n
@@ -111,7 +117,13 @@ class presetmanager:
             outfile.write(presetsJSON)
 
     @staticmethod
-    def change_preset(presetName, presetNewName, presetNewDesc):
+    def change_preset(presetName:str, presetNewName:str, presetNewDesc:str):
+        '''
+        Changes the name and description of a preset\n
+        presetName: Name of the preset\n
+        presetNewName: New name of the preset\n
+        presetNewDesc: New description of the preset
+        '''
         presetmanager.create_directories()
 
         # Change to the registry directory
@@ -136,7 +148,11 @@ class presetmanager:
                         outfile.write(presetsJSON)
 
     @staticmethod
-    def save_preset(presetName):
+    def save_preset(presetName:str):
+        '''
+        Saves the current desktop layout as a preset\n
+        presetName: Name of the preset
+        '''
         presetmanager.create_directories()
         # Delete the existing preset file
         os.remove(os.path.join(presetsDirectory, presetName + ".reg"))
@@ -144,7 +160,11 @@ class presetmanager:
         subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(presetsDirectory, presetName)}.reg", shell=True)
 
     @staticmethod
-    def load_preset(presetName):
+    def load_preset(presetName:str):
+        '''
+        Loads a preset onto the Desktop\n
+        presetName: Name of the preset
+        '''
         presetmanager.create_directories()
         # Getting name of registry file
         presetFileName = os.path.join(presetsDirectory, presetName + ".reg")
@@ -159,7 +179,11 @@ class presetmanager:
         subprocess.Popen(['explorer'], shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
 
     @staticmethod
-    def delete_preset(presetToDelete):
+    def delete_preset(presetToDelete:str):
+        '''
+        Deletes a preset\n
+        presetToDelete: Name of the preset
+        '''
         presetmanager.create_directories()
 
         # Change to the registry directory
@@ -196,6 +220,9 @@ class presetmanager:
 
     @staticmethod
     def get_all_entries():
+        '''
+        Returns a list of all presets
+        '''
         presetmanager.create_directories()
         
         f = open(f"{presetListFilename}", "r")
@@ -210,6 +237,9 @@ class presetmanager:
 
     @staticmethod
     def create_directories():
+        '''
+        Creates the necessary directories if they don't exist
+        '''
         
         # Check if the directories exist
         if not os.path.exists(presetsDirectory) and os.path.exists(repositoryDirectory):
@@ -229,7 +259,7 @@ class presetmanager:
                 outfile.write(presetsJSON)
   
     @staticmethod
-    def fileIsEmpty(filename):
+    def fileIsEmpty(filename:str):
         '''
         Checks if a file is empty by confirming that its size is 0 bytes\n
         :param filename: The file to check\n
@@ -238,7 +268,7 @@ class presetmanager:
         return os.stat(filename).st_size == 0
     
 @staticmethod
-def return_shortcut_target(shortcut_path):
+def return_shortcut_target(shortcut_path:str):
     '''
     Returns the target of a shortcut (.lnk)\n
     :param shortcut_path: The path to the shortcut\n
@@ -250,14 +280,18 @@ def return_shortcut_target(shortcut_path):
     return shortcut.Targetpath
 
 @staticmethod
-def getPresetsInJsonFormat(presetsRaw):
+def getPresetsInJsonFormat(presetsRaw:list):
+    '''
+    Returns the presets in a JSON format\n
+    presetsRaw: List of Preset objects\n
+    '''
     presets = [obj.to_dict() for obj in presetsRaw]
     presets.sort(key=lambda obj: obj["name"])
     presetsJSON = json.dumps({"presets": presets})
     return presetsJSON
 
 @staticmethod
-def createShortcut(sourcePath,destinationFolder,ps1FilePath):
+def createShortcut(sourcePath:str,destinationFolder:str,ps1FilePath:str):
     """
     Creates a shortcut for each file in the sourcePath and saves it in the destinationFolder
     destinationFolder: Folder where the shortcuts should be saved
