@@ -1,6 +1,8 @@
 import os
+import shutil
 import subprocess
 import json
+import win32com.client # pip install pywin32
 
 class Preset:
     def __init__(self, name, description, registryLocation, files):
@@ -23,6 +25,15 @@ class Preset:
 
 class presetmanager:
 
+    global presetsDirectory
+    global repositoryDirectory
+    global presetListFilename
+    global homeDirectory
+    homeDirectory = "C:\\Users\\" + os.getenv("username") 
+    presetsDirectory = homeDirectory + "\\AppData\\Local\\DLO\\Presets"
+    repositoryDirectory = homeDirectory + "\\AppData\\Local\\DLO\\Presets\\Repository"
+    presetListFilename = homeDirectory + "\\AppData\\Local\\DLO\\Presets\\PresetList.json"
+
     @staticmethod
     def create_preset(presetName, presetDescription):
         '''
@@ -30,16 +41,15 @@ class presetmanager:
         presetName: Name of the preset\n
         presetDescription: Description of the preset
         '''
+
         presetmanager.create_directories()
 
         # Set the directory where the files are located
-        registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
-        presetListFilename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\PresetList.json"
         desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop') # Getting the desktop path
         presetsRaw = []
 
         # 1: Export the registry key to the registryDirectory
-        subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(registryDirectory, 'Presets', presetName)}.reg", shell=True)
+        subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(presetsDirectory, presetName)}.reg", shell=True)
         
         # 2: load the .json file that stores the presets
         if presetmanager.fileIsEmpty(presetListFilename) != True:
@@ -68,7 +78,18 @@ class presetmanager:
         #Adding files to the preset
         files = [] 
         for filepath in file_paths:
-            files.append({"path": filepath, "name": os.path.basename(filepath)})
+            #copy files to repository and then delete them from desktop
+
+            if os.path.splitext(filepath)[1] == ".lnk":
+
+                target_path = return_shortcut_target(filepath)
+                files.append({"path": target_path, "name": os.path.basename(target_path)})
+            else: 
+                
+                filepath = shutil.copy(filepath,os.path.join(repositoryDirectory))
+                os.remove(filepath)
+                files.append({"path": filepath, "name": os.path.basename(filepath)})
+
 
         # Adding the new entry to the 'presetlist.json'
         presetsRaw.append(
@@ -78,9 +99,7 @@ class presetmanager:
             files)) 
 
         # Converting Objects into a dictionary
-        presets = [obj.to_dict() for obj in presetsRaw]
-        presets.sort(key=lambda obj: obj["name"])
-        presetsJSON = json.dumps({"presets": presets})
+        presetsJSON = getPresetsInJsonFormat(presetsRaw)
 
         with open(f"{presetListFilename}", "w") as outfile:
             outfile.write(presetsJSON)
@@ -89,12 +108,8 @@ class presetmanager:
     def change_preset(presetName, presetNewName, presetNewDesc):
         presetmanager.create_directories()
 
-        # Set the directory where the files are located
-        registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
-        presetListFilename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\PresetList.json"
-
         # Change to the registry directory
-        os.chdir(os.path.join(registryDirectory, "Presets"))
+        os.chdir(presetsDirectory)
 
         with open(presetListFilename) as fp:
             presetList = json.load(fp)
@@ -109,36 +124,24 @@ class presetmanager:
                     for preset in presetList['presets']:
                         presetsRaw.append(Preset.to_Preset(preset))
 
-                    presets = [obj.to_dict() for obj in presetsRaw]
-                    presets.sort(key=lambda obj: obj["name"])
-                    presetsJSON = json.dumps({"presets": presets})
+                    presetsJSON = getPresetsInJsonFormat(presetsRaw)
 
-                    filename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\presetlist.json"
-
-                    with open(f"{filename}", "w") as outfile:
+                    with open(f"{presetListFilename}", "w") as outfile:
                         outfile.write(presetsJSON)
 
     @staticmethod
     def save_preset(presetName):
         presetmanager.create_directories()
-
-        # Set the directory where the files are located
-        registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
-
         # Delete the existing preset file
-        os.remove(os.path.join(registryDirectory, "Presets", presetName + ".reg"))
+        os.remove(os.path.join(presetsDirectory, presetName + ".reg"))
         # Export the registry key to the registry directory
-        subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(registryDirectory, 'Presets', presetName)}.reg", shell=True)
+        subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(presetsDirectory, presetName)}.reg", shell=True)
 
     @staticmethod
     def load_preset(presetName):
         presetmanager.create_directories()
-
-        # Set the directory where the files are located
-        registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
-
         # Getting name of registry file
-        presetFileName = os.path.join(registryDirectory, "Presets", presetName + ".reg")
+        presetFileName = os.path.join(presetsDirectory, presetName + ".reg")
 
         # Exetuing registry file
         subprocess.call(['reg', 'import', presetFileName])
@@ -153,13 +156,8 @@ class presetmanager:
     def delete_preset(presetToDelete):
         presetmanager.create_directories()
 
-        # Set the directory where the files are located
-        registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
-        presetListFilename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\PresetList.json"
-
-
         # Change to the registry directory
-        os.chdir(os.path.join(registryDirectory, "Presets"))
+        os.chdir(presetsDirectory)
         
         with open(presetListFilename) as fp:
             presetList = json.load(fp)
@@ -193,10 +191,6 @@ class presetmanager:
     @staticmethod
     def get_all_entries():
         presetmanager.create_directories()
-
-        # Set the directory where the files are located
-        registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
-        presetListFilename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\PresetList.json"
         
         f = open(f"{presetListFilename}", "r")
         jsonlist = json.loads(f.read())
@@ -210,15 +204,12 @@ class presetmanager:
 
     @staticmethod
     def create_directories():
-        # Set the directory where the files are located
-        registryDirectory = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO"
-        presetListFilename = "C:\\Users\\" + os.getenv("username") + "\\AppData\\Local\\DLO\\Presets\\PresetList.json"
         
         # Check if the directories exist
-        if not os.path.exists(registryDirectory) or not os.path.exists(os.path.join(registryDirectory, "Presets")) and os.path.exists(os.path.join(registryDirectory, "Repository")):
+        if not os.path.exists(presetsDirectory) and os.path.exists(repositoryDirectory):
             # Create the directories
-            os.makedirs(os.path.join(registryDirectory, "Presets"))
-            os.makedirs(os.path.join(registryDirectory, "Repository"))
+            os.makedirs(presetsDirectory)
+            os.makedirs(repositoryDirectory)
 
         # Check if the 'presetlist.json' File exists
         if not os.path.exists(presetListFilename):
@@ -239,3 +230,22 @@ class presetmanager:
         :return: True if the file is empty, False otherwise\n
         '''
         return os.stat(filename).st_size == 0
+    
+@staticmethod
+def return_shortcut_target(shortcut_path):
+    '''
+    Returns the target of a shortcut (.lnk)\n
+    :param shortcut_path: The path to the shortcut\n
+    :return: The target of the shortcut\n
+    '''
+
+    shell = win32com.client.Dispatch("WScript.Shell")
+    shortcut = shell.CreateShortCut(shortcut_path)
+    return shortcut.Targetpath
+
+@staticmethod
+def getPresetsInJsonFormat(presetsRaw):
+    presets = [obj.to_dict() for obj in presetsRaw]
+    presets.sort(key=lambda obj: obj["name"])
+    presetsJSON = json.dumps({"presets": presets})
+    return presetsJSON
