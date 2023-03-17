@@ -1,0 +1,32 @@
+
+<html>
+    <head>
+        <link rel="stylesheet" href="./styles.css">
+        <script type="text/javascript" src="/eel.js"></script>
+        <script src="./connector.js"></script>
+        <title>DLO</title>
+    </head>
+
+    <div id="formsContainer">
+        <body>
+            <div class="window">
+                <h1 id="logintitle">New Preset</h1>
+                <input id="prname" type="text" name="u" placeholder="Name" required="required" />
+                <textarea id="prdesc" placeholder="Description"></textarea>
+                <button onclick="createpreset_senddata()" type="submit" class="btn btn-primary btn-block btn-large">Add</button>
+            </div>
+        </body>
+    
+        <body>
+            <div class="window">
+                <h1 id="logintitle">Manage Preset</h1>
+                <select name="presets" id="delpres_dropdown">
+
+                </select>
+                <button onclick="delete_preset()" type="submit" class="btn btn-primary btn-block btn-large">Delete</button>
+                <button onclick="load_preset()" type="submit" class="btn btn-primary btn-block btn-large">Load</button>
+                <button onclick="save_preset()" type="submit" class="btn btn-primary btn-block btn-large">Save</button>
+            </div>
+        </body>
+    </div>
+</html>
