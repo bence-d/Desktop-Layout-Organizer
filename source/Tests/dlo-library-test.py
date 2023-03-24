@@ -51,16 +51,30 @@ from dlo_library import presetmanager as pmgr
 
 # Test 6:
 
-print("[Test 6] > Get a list of members in 'presetlist.json' ")
-listOfEntries = pmgr.get_all_entries()
-emptyList = []
+# print("[Test 6] > Get a list of members in 'presetlist.json' ")
+# listOfEntries = pmgr.get_all_entries()
+# emptyList = []
 
-if type(listOfEntries) == type(emptyList):
-    print("[Test 6] > Presets found:")
-    for actPres in listOfEntries:
-        print("[Test 6] > " + actPres.name)
-    print("[Test 6] > Test Passed. (Method returns a list with entries.)")
-else:
-    print("[Test 6] > Test Failed. (Method returns a variable with an unexpected datatype: " + type(listOfEntries) + ".")
+# if type(listOfEntries) == type(emptyList):
+#     print("[Test 6] > Presets found:")
+#     for actPres in listOfEntries:
+#         print("[Test 6] > " + actPres.name)
+#     print("[Test 6] > Test Passed. (Method returns a list with entries.)")
+# else:
+#     print("[Test 6] > Test Failed. (Method returns a variable with an unexpected datatype: " + type(listOfEntries) + ".")
 
-userInput = input("Press a button to continue...")
+# userInput = input("Press a button to continue...")
+
+# Test 7:
+
+print("[Test 7] > Creating a preset with name")
+presName = input("[Test 1] Name of new preset: ")
+file_paths = pmgr.create_preset(presName, "exampledesc")
+
+i = 1
+for filepath in file_paths:
+    print("> [" + str(i) +"]: " + filepath)
+    i = i + 1
+    pmgr.copy_file_to_repository(filepath)
+
+confirm = input("Press a button to continue...")

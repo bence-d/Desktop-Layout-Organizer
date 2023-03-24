@@ -3,6 +3,8 @@ import shutil
 import subprocess
 import json
 import win32com.client # pip install pywin32
+import stringProcessor
+import sys
 
 class Preset:
     def __init__(self, name, description, registryLocation, files):
@@ -31,10 +33,13 @@ class presetmanager:
     global repositoryDirectory
     global presetListFilename
     global homeDirectory
+    global powerShellExePath
+    
     homeDirectory = "C:\\Users\\" + os.getenv("username") 
     presetsDirectory = homeDirectory + "\\AppData\\Local\\DLO\\Presets"
     repositoryDirectory = homeDirectory + "\\AppData\\Local\\DLO\\Repository"
     presetListFilename = homeDirectory + "\\AppData\\Local\\DLO\\Presets\\PresetList.json"
+    powerShellExePath = "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
 
     @staticmethod
     def create_preset(presetName, presetDescription):
@@ -111,7 +116,13 @@ class presetmanager:
     @staticmethod
     def copy_file_to_repository(filepath):
         print("recieved filepath: " + filepath)
-        shutil.copy(filepath, repositoryDirectory)
+        dest=shutil.copy(filepath, repositoryDirectory)
+        destdir, filename = os.path.split(filepath)
+        print("> Creating shortcut... Data:")
+        print(">    Source: " + dest)
+        print(">    Destination: " + destdir)
+        # createShortcut(sourcePath:str,destinationFolder:str,ps1FilePath:str)
+        createShortcut(dest, destdir, "C:\\Users\\Bence\\OneDrive - HTBLA Leonding\\Schule\\SYP - Systemplanung\\Desktop-Layout-Organizer\\source\\createShortcutCommands.ps1")
         os.remove(filepath)
 
     @staticmethod
@@ -259,3 +270,39 @@ def getPresetsInJsonFormat(presetsRaw):
     presets.sort(key=lambda obj: obj["name"])
     presetsJSON = json.dumps({"presets": presets})
     return presetsJSON
+
+@staticmethod
+def createShortcut(fileToCopy:str,destinationFolder:str,ps1FilePath:str):
+    """
+    Creates a shortcut for each file in the sourcePath and saves it in the destinationFolder
+    destinationFolder: Folder where the shortcuts should be saved
+    ps1FilePath: Path to the PowerShell Script that creates the shortcuts
+    sourcePath: Folder where the files are located
+    """
+    sourcePath = stringProcessor.process(fileToCopy)
+    ps1FilePath = stringProcessor.process(ps1FilePath)
+
+    shortcutPath = "undefined"
+
+    # Set the directory where the files are located
+    desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop') # Getting the desktop path
+    if developermode==True:
+        desktop_path = os.path.join(desktop_path, 'DLO-Virtual-Desktop') # Getting the desktop path
+
+    shortcutPath = os.path.join(desktop_path, os.path.splitext(os.path.basename(fileToCopy))[0] + ".lnk")
+    print("> shortcutpath: " +shortcutPath)
+    print("filetocopy: " + fileToCopy)
+    
+    ## DEBUG
+    ## print ( " -> Printing variables used for PS execution..." )
+    ## print ( "powerShellExePath: " + powerShellExePath )
+    ## print ( "ps1FilePath: " + ps1FilePath )
+    ## print ( "shortcutpath: " + shortcutPath )
+    ## print ( "targetFile: " + targetFile)
+    
+    p = subprocess.run([powerShellExePath,ps1FilePath, shortcutPath, fileToCopy],stdout=sys.stdout)
+
+    if p.returncode == 0:
+        print("-> Succesfully created shortcut for '" + fileToCopy +"'")
+    else:
+        print("-> An error as has occured creating the Shortcut")
