@@ -4,7 +4,7 @@
 # tested, the testing should be done partly with this script and manually.          #
 #####################################################################################
 
-from dlo_library import presetmanager as pmgr
+from presetManger import presetmanager as pmgr
 
 # print("-> Started Tests...")
 
@@ -71,10 +71,10 @@ print("[Test 7] > Creating a preset with name")
 presName = input("[Test 1] Name of new preset: ")
 file_paths = pmgr.create_preset(presName, "exampledesc")
 
-i = 1
-for filepath in file_paths:
-    print("> [" + str(i) +"]: " + filepath)
-    i = i + 1
-    pmgr.copy_file_to_repository(filepath)
+#i = 1
+#for filepath in file_paths:
+#    print("> [" + str(i) +"]: " + filepath)
+#    i = i + 1
+#    pmgr.copy_file_to_repository(filepath)
 
 confirm = input("Press a button to continue...")
