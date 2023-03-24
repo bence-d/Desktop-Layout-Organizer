@@ -1,5 +1,5 @@
 import eel
-from dlo_library import presetmanager as pmgr
+from presetManager import presetmanager as pmgr
 
 eel.init('web')
 
