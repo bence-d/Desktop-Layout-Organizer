@@ -1,42 +1,20 @@
 import json
 import os
+import sys
+sys.path.append('source') 
+from preset_class import Preset
 
 currObj = ""
 
-## OBJECT CLASS ###
-
-class Preset:
-    def __init__(self, name, description, registryLocation):
-        self.name = name
-        self.description = description
-        self.registryLocation = registryLocation
-
-    def toJson(self):
-        return json.dumps(self, default=lambda o: o.__dict__)
-
-    def to_dict(self):
-        return {"name": self.name, "description": self.description, "registryLocation": self.registryLocation}
-    
-    def to_Preset(dict):
-        """dict as a parameter
-         \n returns a Preset object with the name,description and registryLocation values
-        """
-        return Preset(dict['name'],dict['description'],dict['registryLocation'])
-
-### HOW TO SAVE OBJECT ###
-
 presetsRaw =  [
-    Preset("Preset1", "Description of Preset1", "C:\\Users\\Bence\\Desktop\\preset1.reg"), 
-    Preset("Preset2", "Description of Preset2", "C:\\Users\\Bence\\Desktop\\preset2.reg"),
-    Preset("Preset3", "Description of Preset3", "C:\\Users\\Bence\\Desktop\\preset3.reg")
+    Preset("Preset1", "Description of Preset1", "C:\\Users\\Bence\\Desktop\\preset1.reg",[]), 
+    Preset("Preset2", "Description of Preset2", "C:\\Users\\Bence\\Desktop\\preset2.reg",[]),
+    Preset("Preset3", "Description of Preset3", "C:\\Users\\Bence\\Desktop\\preset3.reg",[])
 ]
-
-### HOW TO SERIALIZE OBJECT ###
 
 # build a list of dicts from your objects:
 presets = [obj.to_dict() for obj in presetsRaw]
 
-# sort it based on number:
 presets.sort(key=lambda obj: obj["name"])
 
 presetsJSON = json.dumps({"presets": presets})
