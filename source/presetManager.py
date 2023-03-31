@@ -5,7 +5,7 @@ import json
 from preset_class import Preset
 from shortcut_util import shortcututil
 
-class presetmanager:
+class presetManager:
 
     global presetsDirectory
     global repositoryDirectory
@@ -26,7 +26,7 @@ class presetmanager:
         presetDescription: Description of the preset
         '''
 
-        presetmanager.create_directories()
+        presetManager.create_directories()
 
         # Set the directory where the files are located
         desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop') # Getting the desktop path
@@ -36,7 +36,7 @@ class presetmanager:
         subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(presetsDirectory, presetName)}.reg", shell=True)
         
         # 2: load the .json file that stores the presets
-        if presetmanager.fileIsEmpty(presetListFilename) != True:
+        if presetManager.fileIsEmpty(presetListFilename) != True:
             with open(presetListFilename) as fp:
                 presetList = json.load(fp)
 
@@ -82,7 +82,7 @@ class presetmanager:
             files)) 
 
         # Converting Objects into a dictionary
-        presetsJSON = getPresetsInJsonFormat(presetsRaw)
+        presetsJSON = presetManager.getPresetsInJsonFormat(presetsRaw)
 
         with open(f"{presetListFilename}", "w") as outfile:
             outfile.write(presetsJSON)
@@ -95,7 +95,7 @@ class presetmanager:
         presetNewName: New name of the preset\n
         presetNewDesc: New description of the preset
         '''
-        presetmanager.create_directories()
+        presetManager.create_directories()
 
         # Change to the registry directory
         os.chdir(presetsDirectory)
@@ -113,7 +113,7 @@ class presetmanager:
                     for preset in presetList['presets']:
                         presetsRaw.append(Preset.to_Preset(preset))
 
-                    presetsJSON = getPresetsInJsonFormat(presetsRaw)
+                    presetsJSON = presetManager.getPresetsInJsonFormat(presetsRaw)
 
                     with open(f"{presetListFilename}", "w") as outfile:
                         outfile.write(presetsJSON)
@@ -124,7 +124,7 @@ class presetmanager:
         Saves the current desktop layout as a preset\n
         presetName: Name of the preset
         '''
-        presetmanager.create_directories()
+        presetManager.create_directories()
         # Delete the existing preset file
         os.remove(os.path.join(presetsDirectory, presetName + ".reg"))
         # Export the registry key to the registry directory
@@ -136,7 +136,7 @@ class presetmanager:
         Loads a preset onto the Desktop\n
         presetName: Name of the preset
         '''
-        presetmanager.create_directories()
+        presetManager.create_directories()
         # Getting name of registry file
         presetFileName = os.path.join(presetsDirectory, presetName + ".reg")
 
@@ -155,7 +155,7 @@ class presetmanager:
         Deletes a preset\n
         presetToDelete: Name of the preset
         '''
-        presetmanager.create_directories()
+        presetManager.create_directories()
 
         # Change to the registry directory
         os.chdir(presetsDirectory)
@@ -194,7 +194,7 @@ class presetmanager:
         '''
         Returns a list of all presets
         '''
-        presetmanager.create_directories()
+        presetManager.create_directories()
         
         f = open(f"{presetListFilename}", "r")
         jsonlist = json.loads(f.read())
@@ -228,7 +228,7 @@ class presetmanager:
 
             with open(f"{presetListFilename}", "w") as outfile:
                 outfile.write(presetsJSON)
-  
+
     @staticmethod
     def fileIsEmpty(filename:str):
         '''
@@ -238,13 +238,13 @@ class presetmanager:
         '''
         return os.stat(filename).st_size == 0
 
-@staticmethod
-def getPresetsInJsonFormat(presetsRaw:list):
-    '''
-    Returns the presets in a JSON format\n
-    presetsRaw: List of Preset objects\n
-    '''
-    presets = [obj.to_dict() for obj in presetsRaw]
-    presets.sort(key=lambda obj: obj["name"])
-    presetsJSON = json.dumps({"presets": presets})
-    return presetsJSON
+    @staticmethod
+    def getPresetsInJsonFormat(presetsRaw:list):
+        '''
+        Returns the presets in a JSON format\n
+        presetsRaw: List of Preset objects\n
+        '''
+        presets = [obj.to_dict() for obj in presetsRaw]
+        presets.sort(key=lambda obj: obj["name"])
+        presetsJSON = json.dumps({"presets": presets})
+        return presetsJSON

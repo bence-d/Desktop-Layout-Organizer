@@ -4,7 +4,11 @@
 # tested, the testing should be done partly with this script and manually.          #
 #####################################################################################
 
-from presetManger import presetmanager as pmgr
+import sys
+sys.path.append('source') 
+from presetManager import presetManager as pmgr
+
+#from source import presetManager as pmgr
 
 # print("-> Started Tests...")
 
