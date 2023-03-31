@@ -11,11 +11,13 @@ class presetManager:
     global repositoryDirectory
     global presetListFilename
     global homeDirectory
+    global desktop_path
 
     homeDirectory = "C:\\Users\\" + os.getenv("username") 
     presetsDirectory = homeDirectory + "\\AppData\\Local\\DLO\\Presets"
     repositoryDirectory = homeDirectory + "\\AppData\\Local\\DLO\\Presets\\Repository"
     presetListFilename = homeDirectory + "\\AppData\\Local\\DLO\\Presets\\PresetList.json"
+    desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop')
 
 
     @staticmethod
@@ -29,7 +31,6 @@ class presetManager:
         presetManager.create_directories()
 
         # Set the directory where the files are located
-        desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop') # Getting the desktop path
         presetsRaw = []
 
         # 1: Export the registry key to the registryDirectory
@@ -137,8 +138,26 @@ class presetManager:
         presetName: Name of the preset
         '''
         presetManager.create_directories()
-        # Getting name of registry file
         presetFileName = os.path.join(presetsDirectory, presetName + ".reg")
+
+        #delete all shortcuts from desktop
+        file_list = [f for f in os.listdir(desktop_path) ]
+        file_paths = [os.path.join(desktop_path, f) for f in file_list]
+        for filepath in file_paths:
+            os.remove(filepath)
+
+        #search for entry in json and load shortcuts on to dekstop
+
+        with open(presetListFilename) as fp:
+            presetList = json.load(fp)
+
+            for preset in presetList['presets']:
+                if preset['name'] == presetName:
+                    for file in preset['files']:
+                        if os.path.splitext(file['path'])[1] == ".lnk":
+                            shortcututil.create_shortcut(file['path'], desktop_path)
+                        else:
+                            shutil.copy(file['path'], desktop_path)
 
         # Exetuing registry file
         subprocess.call(['reg', 'import', presetFileName])
