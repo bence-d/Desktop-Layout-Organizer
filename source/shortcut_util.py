@@ -1,10 +1,10 @@
 import sys
-import stringProcessor
+import stringprocessor as sp
 import os
 import subprocess
 import win32com.client
 
-class shortcututil:
+class ShortcutUtil:
     global powerShellExePath
     powerShellExePath = "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
 
@@ -28,8 +28,8 @@ class shortcututil:
         ps1FilePath: Path to the PowerShell Script that creates the shortcuts
         sourcePath: Folder where the files are located
         """
-        sourcePath = stringProcessor.process(sourcePath)
-        ps1FilePath = stringProcessor.process(ps1FilePath)
+        sourcePath = sp.process(sourcePath)
+        ps1FilePath = sp.process(ps1FilePath)
 
         try:
             #all entries of the targetFolder

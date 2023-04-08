@@ -2,7 +2,7 @@ import json
 import os
 import sys
 sys.path.append('source') 
-from preset_class import Preset
+from preset import Preset
 
 currObj = ""
 

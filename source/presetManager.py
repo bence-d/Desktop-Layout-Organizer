@@ -2,22 +2,22 @@ import os
 import shutil
 import subprocess
 import json
-from preset_class import Preset
+from preset import Preset
 from shortcut_util import shortcututil
 
-class presetManager:
+class PresetManager:
 
-    global presetsDirectory
-    global repositoryDirectory
-    global presetListFilename
-    global homeDirectory
-    global desktop_path
+    global PRESETS_DIRECTORY 
+    global REPOSITORY_DIRECTORY
+    global PRESET_LIST_FILE_NAME
+    global HOME_DIRECTORY
+    global DESKTOP_PATH
 
-    homeDirectory = "C:\\Users\\" + os.getenv("username") 
-    presetsDirectory = homeDirectory + "\\AppData\\Local\\DLO\\Presets"
-    repositoryDirectory = homeDirectory + "\\AppData\\Local\\DLO\\Presets\\Repository"
-    presetListFilename = homeDirectory + "\\AppData\\Local\\DLO\\Presets\\PresetList.json"
-    desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop')
+    HOME_DIRECTORY = "C:\\Users\\" + os.getenv("username") 
+    PRESETS_DIRECTORY = HOME_DIRECTORY + "\\AppData\\Local\\DLO\\Presets"
+    REPOSITORY_DIRECTORY = PRESETS_DIRECTORY + "\\Repository"
+    PRESET_LIST_FILE_NAME = PRESETS_DIRECTORY + "\\PresetList.json"
+    DESKTOP_PATH = os.path.join(os.path.expanduser('~'), 'Desktop')
 
 
     @staticmethod
@@ -28,17 +28,17 @@ class presetManager:
         presetDescription: Description of the preset
         '''
 
-        presetManager.create_directories()
+        PresetManager.create_directories()
 
         # Set the directory where the files are located
         presetsRaw = []
 
         # 1: Export the registry key to the registryDirectory
-        subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(presetsDirectory, presetName)}.reg", shell=True)
+        subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(PRESETS_DIRECTORY, presetName)}.reg", shell=True)
         
         # 2: load the .json file that stores the presets
-        if presetManager.fileIsEmpty(presetListFilename) != True:
-            with open(presetListFilename) as fp:
+        if PresetManager.fileIsEmpty(PRESET_LIST_FILE_NAME) != True:
+            with open(PRESET_LIST_FILE_NAME) as fp:
                 presetList = json.load(fp)
 
             # 3: check if given preset is included in the 'presetlist.json' file
@@ -57,8 +57,8 @@ class presetManager:
                     presetsRaw.append(Preset.to_Preset(preset))
 
         # Getting the files from the desktop
-        file_list = [f for f in os.listdir(desktop_path) ]
-        file_paths = [os.path.join(desktop_path, f) for f in file_list]
+        file_list = [f for f in os.listdir(DESKTOP_PATH) ]
+        file_paths = [os.path.join(DESKTOP_PATH, f) for f in file_list]
             
         #Adding files to the preset
         files = [] 
@@ -70,7 +70,7 @@ class presetManager:
                 target_path = shortcututil.return_shortcut_target(filepath)
                 files.append({"path": target_path, "name": os.path.basename(target_path)})
             else: 
-                # filepath = shutil.copy(filepath,os.path.join(repositoryDirectory))
+                # filepath = shutil.copy(filepath,os.path.join(REPOSITORY_DIRECTORY))
                 # os.remove(filepath)
                 files.append({"path": filepath, "name": os.path.basename(filepath)})
 
@@ -83,9 +83,9 @@ class presetManager:
             files)) 
 
         # Converting Objects into a dictionary
-        presetsJSON = presetManager.getPresetsInJsonFormat(presetsRaw)
+        presetsJSON = PresetManager.getPresetsInJsonFormat(presetsRaw)
 
-        with open(f"{presetListFilename}", "w") as outfile:
+        with open(f"{PRESET_LIST_FILE_NAME}", "w") as outfile:
             outfile.write(presetsJSON)
 
     @staticmethod
@@ -96,12 +96,12 @@ class presetManager:
         presetNewName: New name of the preset\n
         presetNewDesc: New description of the preset
         '''
-        presetManager.create_directories()
+        PresetManager.create_directories()
 
         # Change to the registry directory
-        os.chdir(presetsDirectory)
+        os.chdir(PRESETS_DIRECTORY)
 
-        with open(presetListFilename) as fp:
+        with open(PRESET_LIST_FILE_NAME) as fp:
             presetList = json.load(fp)
 
             for preset in presetList['presets']:
@@ -114,9 +114,9 @@ class presetManager:
                     for preset in presetList['presets']:
                         presetsRaw.append(Preset.to_Preset(preset))
 
-                    presetsJSON = presetManager.getPresetsInJsonFormat(presetsRaw)
+                    presetsJSON = PresetManager.getPresetsInJsonFormat(presetsRaw)
 
-                    with open(f"{presetListFilename}", "w") as outfile:
+                    with open(f"{PRESET_LIST_FILE_NAME}", "w") as outfile:
                         outfile.write(presetsJSON)
 
     @staticmethod
@@ -125,11 +125,11 @@ class presetManager:
         Saves the current desktop layout as a preset\n
         presetName: Name of the preset
         '''
-        presetManager.create_directories()
+        PresetManager.create_directories()
         # Delete the existing preset file
-        os.remove(os.path.join(presetsDirectory, presetName + ".reg"))
+        os.remove(os.path.join(PRESETS_DIRECTORY, presetName + ".reg"))
         # Export the registry key to the registry directory
-        subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(presetsDirectory, presetName)}.reg", shell=True)
+        subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(PRESETS_DIRECTORY, presetName)}.reg", shell=True)
 
     @staticmethod
     def load_preset(presetName:str):
@@ -137,27 +137,27 @@ class presetManager:
         Loads a preset onto the Desktop\n
         presetName: Name of the preset
         '''
-        presetManager.create_directories()
-        presetFileName = os.path.join(presetsDirectory, presetName + ".reg")
+        PresetManager.create_directories()
+        presetFileName = os.path.join(PRESETS_DIRECTORY, presetName + ".reg")
 
         #delete all shortcuts from desktop
-        file_list = [f for f in os.listdir(desktop_path) ]
-        file_paths = [os.path.join(desktop_path, f) for f in file_list]
+        file_list = [f for f in os.listdir(DESKTOP_PATH) ]
+        file_paths = [os.path.join(DESKTOP_PATH, f) for f in file_list]
         for filepath in file_paths:
             os.remove(filepath)
 
         #search for entry in json and load shortcuts on to dekstop
 
-        with open(presetListFilename) as fp:
+        with open(PRESET_LIST_FILE_NAME) as fp:
             presetList = json.load(fp)
 
             for preset in presetList['presets']:
                 if preset['name'] == presetName:
                     for file in preset['files']:
                         if os.path.splitext(file['path'])[1] == ".lnk":
-                            shortcututil.create_shortcut(file['path'], desktop_path)
+                            shortcututil.create_shortcut(file['path'], DESKTOP_PATH)
                         else:
-                            shutil.copy(file['path'], desktop_path)
+                            shutil.copy(file['path'], DESKTOP_PATH)
 
         # Exetuing registry file
         subprocess.call(['reg', 'import', presetFileName])
@@ -174,12 +174,12 @@ class presetManager:
         Deletes a preset\n
         presetToDelete: Name of the preset
         '''
-        presetManager.create_directories()
+        PresetManager.create_directories()
 
         # Change to the registry directory
-        os.chdir(presetsDirectory)
+        os.chdir(PRESETS_DIRECTORY)
         
-        with open(presetListFilename) as fp:
+        with open(PRESET_LIST_FILE_NAME) as fp:
             presetList = json.load(fp)
 
         for preset in presetList['presets']:
@@ -197,10 +197,10 @@ class presetManager:
                 presetsJSON = json.dumps({"presets": presets})
 
                 # Saving 'presetlist.json'
-                with open(f"{presetListFilename}", "r+") as outfile:
+                with open(f"{PRESET_LIST_FILE_NAME}", "r+") as outfile:
                     outfile.truncate(0)
 
-                with open(f"{presetListFilename}", "w") as outfile:
+                with open(f"{PRESET_LIST_FILE_NAME}", "w") as outfile:
                     outfile.write(presetsJSON)
 
                 # Removing registry file
@@ -213,9 +213,9 @@ class presetManager:
         '''
         Returns a list of all presets
         '''
-        presetManager.create_directories()
+        PresetManager.create_directories()
         
-        f = open(f"{presetListFilename}", "r")
+        f = open(f"{PRESET_LIST_FILE_NAME}", "r")
         jsonlist = json.loads(f.read())
 
         presets = []
@@ -232,24 +232,24 @@ class presetManager:
         '''
         
         # Check if the directories exist
-        if not os.path.exists(presetsDirectory) and os.path.exists(repositoryDirectory):
+        if not os.path.exists(PRESETS_DIRECTORY) and os.path.exists(REPOSITORY_DIRECTORY):
             # Create the directories
-            os.makedirs(presetsDirectory)
-            os.makedirs(repositoryDirectory)
+            os.makedirs(PRESETS_DIRECTORY)
+            os.makedirs(REPOSITORY_DIRECTORY)
 
         # Check if the 'presetlist.json' File exists
-        if not os.path.exists(presetListFilename):
+        if not os.path.exists(PRESET_LIST_FILE_NAME):
             # Feeding the file an empty list
             emptyList = []
 
             # Converting Objects into a dictionary
             presetsJSON = json.dumps({"presets": emptyList})
 
-            with open(f"{presetListFilename}", "w") as outfile:
+            with open(f"{PRESET_LIST_FILE_NAME}", "w") as outfile:
                 outfile.write(presetsJSON)
 
     @staticmethod
-    def fileIsEmpty(filename:str):
+    def file_is_empty(filename:str):
         '''
         Checks if a file is empty by confirming that its size is 0 bytes\n
         :param filename: The file to check\n
@@ -258,7 +258,7 @@ class presetManager:
         return os.stat(filename).st_size == 0
 
     @staticmethod
-    def getPresetsInJsonFormat(presetsRaw:list):
+    def get_presets_in_json_format(presetsRaw:list):
         '''
         Returns the presets in a JSON format\n
         presetsRaw: List of Preset objects\n
