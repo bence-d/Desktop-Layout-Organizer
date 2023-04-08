@@ -6,7 +6,7 @@
 
 import sys
 sys.path.append('source') 
-from presetManager import presetManager as pmgr
+from presetmanager import presetManager as pmgr
 
 #from source import presetManager as pmgr
 

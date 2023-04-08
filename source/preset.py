@@ -7,13 +7,13 @@ class Preset:
         self.registryLocation = registryLocation
         self.files = files
 
-    def toJson(self):
+    def to_Json(self):
         '''
         Returns the object as a json string
         '''
         return json.dumps(self, default=lambda o: o.__dict__)
 
-    def to_dict(self):
+    def to_Dict(self):
         '''
         Returns the object as a dictionary
         '''
