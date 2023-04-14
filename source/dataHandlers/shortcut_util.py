@@ -1,5 +1,5 @@
 import sys
-import stringprocessor as sp
+import stringProcessor as sp
 import os
 import subprocess
 import win32com.client

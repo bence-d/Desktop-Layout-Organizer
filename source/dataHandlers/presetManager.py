@@ -5,7 +5,7 @@ import json
 import configparser
 
 from preset import Preset
-from shortcut_util import shortcututil
+from shortcut_util import ShortcutUtil
 
 
 class PresetManager:

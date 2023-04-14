@@ -1,4 +1,4 @@
-#!C:\Users\Bence\Desktop\eelui\Scripts\python.exe
+#!"C:\Users\bence\OneDrive - HTBLA Leonding\Schule\SYP - Systemplanung\Desktop-Layout-Organizer\source\eelui\Scripts\python.exe"
 # EASY-INSTALL-ENTRY-SCRIPT: 'future==0.18.3','console_scripts','pasteurize'
 import re
 import sys
