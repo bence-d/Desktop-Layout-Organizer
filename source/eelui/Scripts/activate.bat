@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\Bence\Desktop\eelui
+set VIRTUAL_ENV=C:\Users\bence\OneDrive - HTBLA Leonding\Schule\SYP - Systemplanung\Desktop-Layout-Organizer\source\eelui
 
 if not defined PROMPT set PROMPT=$P$G
 

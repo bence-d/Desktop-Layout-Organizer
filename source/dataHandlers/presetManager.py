@@ -3,7 +3,7 @@ import shutil
 import subprocess
 import json
 from preset import Preset
-from shortcut_util import shortcututil
+from shortcut_util import ShortcutUtil as shortcututil
 
 class PresetManager:
 

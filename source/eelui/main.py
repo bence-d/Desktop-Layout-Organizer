@@ -1,5 +1,6 @@
 import eel
-from presetmanager import presetmanager as pmgr
+import sys
+from dataHandlers.presetManager import PresetManager as pmgr
 
 eel.init('web')
 
