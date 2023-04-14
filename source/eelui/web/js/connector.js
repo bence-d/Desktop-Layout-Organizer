@@ -1,3 +1,4 @@
+/*
 function createpreset_senddata() {
     let name = document.getElementById('prname').value;
     let desc = document.getElementById('prdesc').value;
@@ -48,9 +49,10 @@ function save_preset() {
     let presetToDel = document.getElementById("delpres_dropdown").value;
     eel.savepreset(presetToDel);
 }
+*/
 
 
 /*************************************/
 /*             ON INIT               */
 /*************************************/
-delpreset_getdata();
+//delpreset_getdata();
