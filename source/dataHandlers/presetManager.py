@@ -2,8 +2,11 @@ import os
 import shutil
 import subprocess
 import json
+import configparser
+
 from preset import Preset
 from shortcut_util import ShortcutUtil as shortcututil
+
 
 class PresetManager:
 
@@ -153,6 +156,10 @@ class PresetManager:
 
             for preset in presetList['presets']:
                 if preset['name'] == presetName:
+
+                    # Saving the preset in the config file (in order to load it on startup)
+                    PresetManager.save_preset_in_config(presetName)
+
                     for file in preset['files']:
                         if os.path.splitext(file['path'])[1] == ".lnk":
                             shortcututil.create_shortcut(file['path'], DESKTOP_PATH)
@@ -267,3 +274,21 @@ class PresetManager:
         presets.sort(key=lambda obj: obj["name"])
         presetsJSON = json.dumps({"presets": presets})
         return presetsJSON
+    
+    @staticmethod
+    def save_preset_in_config(presetName:str):
+        '''
+        Saves the current presetName in the cfg file
+        '''
+
+        # Create a ConfigParser object
+        config = configparser.ConfigParser()
+
+        # Add some sections and options to the ConfigParser object
+        config.add_section('Preset')
+        config.set('Preset', 'presetName', presetName)
+
+        # Write the ConfigParser object to the config file in located in the same directory as the script
+        with open(os.path.join(PRESETS_DIRECTORY,'lastPreset.cfg'), 'w') as configfile:
+            config.write(configfile)
+            
