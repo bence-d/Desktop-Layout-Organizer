@@ -54,8 +54,8 @@
                 <div class="navbar-nav w-100">
                     <a href="index.html" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
                     <a href="list.html" class="nav-item nav-link"><i class="fa fa-stream me-2"></i>Overview</a>
-                    <a href="create.html" class="nav-item nav-link active"><i class="fa fa-plus me-2"></i>Create</a>
-                    <a href="edit.html" class="nav-item nav-link"><i class="fa fa-pen me-2"></i>Edit</a>
+                    <a href="create.html" class="nav-item nav-link"><i class="fa fa-plus me-2"></i>Create</a>
+                    <a href="edit.html" class="nav-item nav-link active"><i class="fa fa-pen me-2"></i>Edit</a>
                     <a href="import-export.html" class="nav-item nav-link"><i class="fa fa-file-export me-2"></i>Import/Export</a>
                 </div>
             </nav>
@@ -82,8 +82,13 @@
                 <div class="row g-4">
                     <div class="col-sm-12 col-xl-6">
                         <div class="bg-secondary rounded h-100 p-4">
-                            <h6 class="mb-4">Create a preset</h6>
+                            <h6 class="mb-4">Edit a preset</h6>
                             <form>
+                                <div class="mb-3">
+                                    <label for="presetSelector" class="form-label">Preset</label>
+                                    <select class="form-control" name="presetSelector" id="presetEditorDropdown">
+                                    </select>
+                                </div>
                                 <div class="mb-3">
                                     <label for="inputName" class="form-label">Name</label>
                                     <input type="text" class="form-control" id="inputName">
@@ -92,7 +97,7 @@
                                     <label for="descriptionInput" class="form-label">Description</label>
                                     <input type="text" class="form-control" id="inputDescription">
                                 </div>
-                                <button type="submit" class="btn btn-primary" onclick="createPreset()">Create</button>
+                                <button type="submit" class="btn btn-primary" onclick="alert('not implemented yet')" id="input_update_button">Update</button>
                             </form>
                         </div>
                     </div>
@@ -136,6 +141,14 @@
 
     <!-- Connector to the Python Backend -->
     <script src="./js/connector.js"></script>
+    <script>
+        window.onload = function() {
+            if (window.jQuery) {  
+                // jQuery is loaded  
+                fillPresetEditorDropdown();
+            }
+        }
+    </script>
 </body>
 
 </html>

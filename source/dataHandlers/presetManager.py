@@ -40,7 +40,7 @@ class PresetManager:
         subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(PRESETS_DIRECTORY, presetName)}.reg", shell=True)
         
         # 2: load the .json file that stores the presets
-        if PresetManager.fileIsEmpty(PRESET_LIST_FILE_NAME) != True:
+        if PresetManager.file_is_empty(PRESET_LIST_FILE_NAME) != True:
             with open(PRESET_LIST_FILE_NAME) as fp:
                 presetList = json.load(fp)
 
@@ -70,7 +70,7 @@ class PresetManager:
 
             if os.path.splitext(filepath)[1] == ".lnk":
 
-                target_path = shortcututil.return_shortcut_target(filepath)
+                target_path = ShortcutUtil.return_shortcut_target(filepath)
                 files.append({"path": target_path, "name": os.path.basename(target_path)})
             else: 
                 # filepath = shutil.copy(filepath,os.path.join(REPOSITORY_DIRECTORY))
@@ -86,7 +86,7 @@ class PresetManager:
             files)) 
 
         # Converting Objects into a dictionary
-        presetsJSON = PresetManager.getPresetsInJsonFormat(presetsRaw)
+        presetsJSON = PresetManager.get_presets_in_json_format(presetsRaw)
 
         with open(f"{PRESET_LIST_FILE_NAME}", "w") as outfile:
             outfile.write(presetsJSON)
@@ -162,7 +162,7 @@ class PresetManager:
 
                     for file in preset['files']:
                         if os.path.splitext(file['path'])[1] == ".lnk":
-                            shortcututil.create_shortcut(file['path'], DESKTOP_PATH)
+                            ShortcutUtil.create_shortcut(file['path'], DESKTOP_PATH)
                         else:
                             shutil.copy(file['path'], DESKTOP_PATH)
 
@@ -199,7 +199,7 @@ class PresetManager:
                 for preset in presetList['presets']:
                     presetsRaw.append(Preset.to_Preset(preset))
 
-                presets = [obj.to_dict() for obj in presetsRaw]
+                presets = [obj.to_Dict() for obj in presetsRaw]
                 presets.sort(key=lambda obj: obj["name"])
                 presetsJSON = json.dumps({"presets": presets})
 
@@ -239,7 +239,7 @@ class PresetManager:
         '''
         
         # Check if the directories exist
-        if not os.path.exists(PRESETS_DIRECTORY) and os.path.exists(REPOSITORY_DIRECTORY):
+        if not os.path.exists(PRESETS_DIRECTORY) or not os.path.exists(REPOSITORY_DIRECTORY):
             # Create the directories
             os.makedirs(PRESETS_DIRECTORY)
             os.makedirs(REPOSITORY_DIRECTORY)
@@ -270,7 +270,7 @@ class PresetManager:
         Returns the presets in a JSON format\n
         presetsRaw: List of Preset objects\n
         '''
-        presets = [obj.to_dict() for obj in presetsRaw]
+        presets = [obj.to_Dict() for obj in presetsRaw]
         presets.sort(key=lambda obj: obj["name"])
         presetsJSON = json.dumps({"presets": presets})
         return presetsJSON
