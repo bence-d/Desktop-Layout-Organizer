@@ -293,13 +293,50 @@ class PresetManager:
             config.write(configfile)
 
     @staticmethod
-    def import_preset(presetName:str, presetFile:str):
+    def import_preset(presetFile:str, presetName:str):
         '''
         Imports a preset from another JSON File\n
         presetName: Name of the preset
+        presetFile: absolute Path to the JSON File
         '''
 
+        # Checking if the file exists, is a JSON File, is not empty and if the preset already exists in the presetlist.json
+        if (not os.path.exists(presetFile) or 
+            os.path.splitext(presetFile)[1] != ".json" or
+            PresetManager.file_is_empty(presetFile) or 
+            PresetManager.preset_exists(presetName)):
+
+            return
         
+        # Reading the JSON File
+        with open(presetFile) as fp:
+            presetList = json.load(fp)
+
+        #Finding the preset in the JSON File
+        for preset in presetList['presets']:
+            if preset['name'] == presetName:
+
+                # Creating the preset
+                PresetManager.create_preset(presetName, preset['files'], preset['registry'])
+
+                # Adding the preset to the presetlist.json
+                PresetManager.add_preset_to_list(presetName, preset['files'], preset['registry'])
+
+                break
+
+        
+    @staticmethod
+    def preset_exists(presetName:str):
+        '''
+        Checks if a preset already exists\n
+        presetName: Name of the preset
+        '''
+        presets = PresetManager.get_all_entries()
+        for preset in presets:
+            if preset.name == presetName:
+                return True
+        return False
+
         
 
             
