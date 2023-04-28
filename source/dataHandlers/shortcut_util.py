@@ -1,5 +1,5 @@
 import sys
-import stringProcessor as sp
+import dataHandlers.stringProcessor as sp
 import os
 import subprocess
 import win32com.client
@@ -43,12 +43,15 @@ class ShortcutUtil:
         targetFile = os.path.splitext(targetFile)[0]
         # add the .lnk extension
         targetFile = targetFile + ".lnk"
+        # add the destination folder to the targetFile
+        targetFile = os.path.join(destinationFolder,targetFile)
 
         # creating the command to execute
         p = subprocess.run([powerShellExePath,ps1FilePath,targetFile,sourceFile],stdout=sys.stdout)
 
         if p.returncode == 0:
             print("-> Succesfully created shortcut for '" + sourceFile +"'")
+            print("-> Destination: " + targetFile)
         else:
             print("-> An error as has occured creating the Shortcut")
             exit()

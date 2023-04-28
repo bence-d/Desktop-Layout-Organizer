@@ -4,8 +4,8 @@ import subprocess
 import json
 import configparser
 
-from preset import Preset
-from shortcut_util import ShortcutUtil
+from dataHandlers.preset import Preset
+from dataHandlers.shortcut_util import ShortcutUtil
 
 
 class PresetManager:
@@ -63,7 +63,7 @@ class PresetManager:
         # Getting the files from the desktop
         file_list = [f for f in os.listdir(DESKTOP_PATH) ]
         file_paths = [os.path.join(DESKTOP_PATH, f) for f in file_list]
-            
+
         #Adding files to the preset
         files = [] 
         for filepath in file_paths:
@@ -73,17 +73,21 @@ class PresetManager:
                 files.append({"path": target_path, "name": os.path.basename(target_path)})
             else: 
                 newFilePath = shutil.copy(filepath,os.path.join(REPOSITORY_DIRECTORY))
-                #os.remove(filepath)
-                #ShortcutUtil.create_shortcut(newFilePath, DESKTOP_PATH)
+                os.remove(filepath)
+                ShortcutUtil.create_shortcut(newFilePath, DESKTOP_PATH)
                 files.append({"path": filepath, "name": os.path.basename(filepath)})
 
-
         # Adding the new entry to the 'presetlist.json'
-        presetsRaw.append(
-            Preset(f"{presetName}",
+
+        presetId = PresetManager.get_next_available_id()
+
+        presetToAdd = Preset(
+            f"{presetId}",
+            f"{presetName}",
             f"{presetDescription}",
             f"C:\\Users\\Bence\\Desktop\\{presetName}.reg",
-            files)) 
+            files)
+        presetsRaw.append(presetToAdd) 
 
         # Converting Objects into a dictionary
         presetsJSON = PresetManager.get_presets_in_json_format(presetsRaw)
@@ -92,13 +96,13 @@ class PresetManager:
             outfile.write(presetsJSON)
 
         # Returning the paths of the files that are on the desktop, so the frontend can create shortcuts for them one by one
-        return "success"
+        return presetToAdd
 
     @staticmethod
-    def change_preset(presetName:str, presetNewName:str, presetNewDesc:str):
+    def change_preset(presetID:int, presetNewName:str, presetNewDesc:str):
         '''
         Changes the name and description of a preset\n
-        presetName: Name of the preset\n
+        presetID: ID of the preset\n
         presetNewName: New name of the preset\n
         presetNewDesc: New description of the preset
         '''
@@ -111,7 +115,7 @@ class PresetManager:
             presetList = json.load(fp)
 
             for preset in presetList['presets']:
-                if preset['name'] == presetName:
+                if preset['id'] == presetID:
 
                     preset['name'] = presetNewName
                     preset['description'] = presetNewDesc
@@ -179,7 +183,7 @@ class PresetManager:
         subprocess.Popen(['explorer'], shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
 
     @staticmethod
-    def delete_preset(presetToDelete:str):
+    def delete_preset(presetID:int):
         '''
         Deletes a preset\n
         presetToDelete: Name of the preset
@@ -192,10 +196,14 @@ class PresetManager:
         with open(PRESET_LIST_FILE_NAME) as fp:
             presetList = json.load(fp)
 
+        presetToDelete = Preset("", "", "", "", [])
+
         for preset in presetList['presets']:
-            if preset['name'] == presetToDelete:
+            if preset['id'] == str(presetID):
                 # Deleting given preset from list
                 list.remove(presetList['presets'],preset)
+
+                presetToDelete = preset
 
                 # Turning Dictionary into an object
                 presetsRaw = []
@@ -214,7 +222,51 @@ class PresetManager:
                     outfile.write(presetsJSON)
 
                 # Removing registry file
-                os.remove(presetToDelete + ".reg") 
+                os.remove(preset['name'] + ".reg") 
+                return presetToDelete
+        
+        return "ERROR: No preset found with id'" + str(presetID) + "'"
+    
+    @staticmethod
+    def update_preset(presetID: int, presetName:str, presetDescription:str):
+        '''
+        Updates a preset\n
+        presetName: New Name of the preset
+        presetDescription: New description of the preset
+        '''
+        PresetManager.create_directories()
+
+        # Change to the registry directory
+        os.chdir(PRESETS_DIRECTORY)
+        
+        with open(PRESET_LIST_FILE_NAME) as fp:
+            presetList = json.load(fp)
+
+        for preset in presetList['presets']:
+            if preset['id'] == presetID:
+                # make a copy of the old registry file
+                shutil.copy(preset.name + ".reg", presetName + ".reg")
+                os.remove(preset.name + ".reg")
+
+                # replacing old preset attributes with the new ones+
+                preset['name'] = presetName	
+                preset['description'] = presetDescription
+
+                # Turning Dictionary into an object
+                presetsRaw = []
+                for preset in presetList['presets']:
+                    presetsRaw.append(Preset.to_Preset(preset))
+
+                presets = [obj.to_Dict() for obj in presetsRaw]
+                presets.sort(key=lambda obj: obj["name"])
+                presetsJSON = json.dumps({"presets": presets})
+
+                # Saving 'presetlist.json'
+                with open(f"{PRESET_LIST_FILE_NAME}", "r+") as outfile:
+                    outfile.truncate(0)
+
+                with open(f"{PRESET_LIST_FILE_NAME}", "w") as outfile:
+                    outfile.write(presetsJSON)
                 break
         return
 
@@ -295,5 +347,19 @@ class PresetManager:
         with open(os.path.join(PRESETS_DIRECTORY,'lastPreset.cfg'), 'w') as configfile:
             config.write(configfile)
             
+    @staticmethod
+    def get_next_available_id():
+        '''
+        Returns the next available id
+        '''
+        highest_id = -1
 
-PresetManager.create_preset("test022", "testdesc")
+        presets = PresetManager.get_all_entries()
+        for preset in presets:
+            if int(preset.id) > int(highest_id):
+                highest_id = preset.id
+        
+        highest_id = int(highest_id) + 1
+
+        return str(highest_id)
+    

@@ -1,7 +1,8 @@
 import json
 
 class Preset:
-    def __init__(self, name:str, description:str, registryLocation:str, files:list):
+    def __init__(self, id:int, name:str, description:str, registryLocation:str, files:list):
+        self.id = id
         self.name = name
         self.description = description
         self.registryLocation = registryLocation
@@ -17,10 +18,10 @@ class Preset:
         '''
         Returns the object as a dictionary
         '''
-        return {"name": self.name, "description": self.description, "registryLocation": self.registryLocation, "files": self.files}
+        return {"id": self.id, "name": self.name, "description": self.description, "registryLocation": self.registryLocation, "files": self.files}
     
     def to_Preset(dict:dict):
         """
         returns a Preset object with the name,description and registryLocation values
         """
-        return Preset(dict['name'],dict['description'],dict['registryLocation'],dict['files'])
+        return Preset(dict['id'],dict['name'],dict['description'],dict['registryLocation'],dict['files'])
