@@ -82,11 +82,16 @@ function addPresetToTable(presetname, presetdesc) {
     let td_checkbox ='<td><input class="form-check-input" type="checkbox" onclick="checkBoxClicked()"></td>';
     let td_presetname = "<td>" + presetname + "</td>";
     let td_presetdesc = "<td>" + presetdesc + "</td>";
-    let td_details = '<td><a class="btn btn-sm btn-primary" href="">Details</a></td>';
+
+    // actions
+    let td_actions = '<td>'
+        td_actions += '<a class="btn btn-sm btn-primary mx-1" href=""><i class="fa fa-check me-2 mx-2"></i></a>';
+        td_actions += '<a class="btn btn-sm btn-primary mx-1" href=""><i class="fa fa-pen me-2 mx-2"></i></a>';
+        td_actions += '</td>';
     let tableRowEnd = "</tr>";
 
     // appending the table row to the table body
-    tableBody.append(tableRowStart + td_checkbox + td_presetname + td_presetdesc + td_details + tableRowEnd);
+    tableBody.append(tableRowStart + td_checkbox + td_presetname + td_presetdesc + td_actions + tableRowEnd);
 }
 eel.expose(addPresetToTable);
 
@@ -100,7 +105,14 @@ function createPreset() {
     console.log(description);
 
     // calling the python function 'createPreset' and passing the values from the input fields
-    eel.create_preset(name, description);
+    let result = eel.create_preset(name, description);
+
+    // check the first 4 letters of the result string and if it say 'ERROR' then show the error message
+    if (result.substring(0, 5) == 'ERROR') {
+        alert("Ein Preset mit der Name existiert schon!")
+    } else {
+        alert(result)
+    }
 }
 
 var disableDeleteButton = true;

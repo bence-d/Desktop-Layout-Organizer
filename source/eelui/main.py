@@ -12,7 +12,7 @@ def saysomething(name, desc):
 
 @eel.expose
 def create_preset(name, desc):
-    pmgr.create_preset(name, desc)
+    return pmgr.create_preset(name, desc)
 
 @eel.expose
 def refresh_table():

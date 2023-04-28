@@ -21,44 +21,35 @@ class ShortcutUtil:
         return shortcut.Targetpath
     
     @staticmethod
-    def createShortcut(sourcePath:str,destinationFolder:str,ps1FilePath:str):
+    def create_shortcut(sourceFile:str,destinationFolder:str):
         """
-        Creates a shortcut for each file in the sourcePath and saves it in the destinationFolder
+        Creates a shortcut for the file sourceFile and saves it in the destinationFolder
         destinationFolder: Folder where the shortcuts should be saved
         ps1FilePath: Path to the PowerShell Script that creates the shortcuts
-        sourcePath: Folder where the files are located
+        sourceFile: File to make a shortcut for
         """
-        sourcePath = sp.process(sourcePath)
+        sourceFile = sp.process(sourceFile)
+
+        # getting the powershell script path relative to the current file
+        ps1FilePath = os.path.dirname(os.path.abspath(__file__))
+        ps1FilePath = os.path.join(ps1FilePath,"createShortcutCommands.ps1")
         ps1FilePath = sp.process(ps1FilePath)
 
-        try:
-            #all entries of the targetFolder
-            entries = os.listdir(sourcePath)
-        except:
-            print("-> File can not be found")
+        # targetFile = sourceFile
+        
+        # get only the filename without the path 
+        targetFile = os.path.basename(sourceFile)
+        # remove the file extension
+        targetFile = os.path.splitext(targetFile)[0]
+        # add the .lnk extension
+        targetFile = targetFile + ".lnk"
+
+        # creating the command to execute
+        p = subprocess.run([powerShellExePath,ps1FilePath,targetFile,sourceFile],stdout=sys.stdout)
+
+        if p.returncode == 0:
+            print("-> Succesfully created shortcut for '" + sourceFile +"'")
+        else:
+            print("-> An error as has occured creating the Shortcut")
             exit()
 
-        if "desktop.ini" in entries:
-            ## we don't want to work with the file "desktop.ini" therefore i'm deleting it from the list
-            entries.remove("desktop.ini")
-
-        for entry in entries:
-
-            ## Parameters being sent to the PowerShell Script to create a shortcut
-            targetFile = os.path.join(sourcePath,entry)
-            shortcutPath = os.path.join(destinationFolder,entry)
-            
-            ## DEBUG
-            ## print ( " -> Printing variables used for PS execution..." )
-            ## print ( "powerShellExePath: " + powerShellExePath )
-            ## print ( "ps1FilePath: " + ps1FilePath )
-            ## print ( "shortcutpath: " + shortcutPath )
-            ## print ( "targetFile: " + targetFile)
-
-            p = subprocess.run([powerShellExePath,ps1FilePath,shortcutPath,targetFile],stdout=sys.stdout)
-
-            if p.returncode == 0:
-                print("-> Succesfully created shortcut for '" + targetFile +"'")
-            else:
-                print("-> An error as has occured creating the Shortcut")
-                exit()

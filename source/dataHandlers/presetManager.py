@@ -15,16 +15,22 @@ class PresetManager:
     global PRESET_LIST_FILE_NAME
     global HOME_DIRECTORY
     global DESKTOP_PATH
+    global DEVELOPER_MODE
 
     HOME_DIRECTORY = "C:\\Users\\" + os.getenv("username") 
     PRESETS_DIRECTORY = HOME_DIRECTORY + "\\AppData\\Local\\DLO\\Presets"
     REPOSITORY_DIRECTORY = PRESETS_DIRECTORY + "\\Repository"
     PRESET_LIST_FILE_NAME = PRESETS_DIRECTORY + "\\PresetList.json"
     DESKTOP_PATH = os.path.join(os.path.expanduser('~'), 'Desktop')
+    DEVELOPER_MODE = True
 
 
     @staticmethod
     def create_preset(presetName:str, presetDescription:str):
+        # Developer mode
+        if (DEVELOPER_MODE):
+            DESKTOP_PATH = os.path.join(os.path.expanduser('~'), 'Desktop\\DLODEV')
+
         '''
         Creates a new preset with given presetName and Description\n
         presetName: Name of the preset\n
@@ -35,29 +41,24 @@ class PresetManager:
 
         # Set the directory where the files are located
         presetsRaw = []
-
-        # 1: Export the registry key to the registryDirectory
-        subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(PRESETS_DIRECTORY, presetName)}.reg", shell=True)
-        
-        # 2: load the .json file that stores the presets
+ 
+        # 1: load the .json file that stores the presets
         if PresetManager.file_is_empty(PRESET_LIST_FILE_NAME) != True:
             with open(PRESET_LIST_FILE_NAME) as fp:
                 presetList = json.load(fp)
 
-            # 3: check if given preset is included in the 'presetlist.json' file
-            foundPresetInList = False
+            # 2: check if given preset is included in the 'presetlist.json' file
             for actPreset in presetList['presets']:
                 if actPreset['name'] == presetName:
-                    foundPresetInList = True
-                    break
+                    # 3: return an error if a preset with the given name is already saved in the 'presetlist.json' file
+                    return "ERROR: A preset with the given name already exists!"
+            
+            # 4: turning dictionary into a list
+            for preset in presetList['presets']:
+                presetsRaw.append(Preset.to_Preset(preset))
 
-            # 3 Wenn schon drin ist, Fehler zurückgeben, ansonsten Eintrag hinzufügen
-            # 4: if a preset with the given name is already saved in the 'presetlist.json' file
-            # return an error, otherwise add it to the file
-            if not foundPresetInList:
-                # Turning dictionary into a list
-                for preset in presetList['presets']:
-                    presetsRaw.append(Preset.to_Preset(preset))
+        # 5: Export the registry key to the registryDirectory
+        subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(PRESETS_DIRECTORY, presetName)}.reg", shell=True)
 
         # Getting the files from the desktop
         file_list = [f for f in os.listdir(DESKTOP_PATH) ]
@@ -67,14 +68,13 @@ class PresetManager:
         files = [] 
         for filepath in file_paths:
             #copy files to repository and then delete them from desktop
-
             if os.path.splitext(filepath)[1] == ".lnk":
-
                 target_path = ShortcutUtil.return_shortcut_target(filepath)
                 files.append({"path": target_path, "name": os.path.basename(target_path)})
             else: 
-                # filepath = shutil.copy(filepath,os.path.join(REPOSITORY_DIRECTORY))
-                # os.remove(filepath)
+                newFilePath = shutil.copy(filepath,os.path.join(REPOSITORY_DIRECTORY))
+                #os.remove(filepath)
+                #ShortcutUtil.create_shortcut(newFilePath, DESKTOP_PATH)
                 files.append({"path": filepath, "name": os.path.basename(filepath)})
 
 
@@ -90,6 +90,9 @@ class PresetManager:
 
         with open(f"{PRESET_LIST_FILE_NAME}", "w") as outfile:
             outfile.write(presetsJSON)
+
+        # Returning the paths of the files that are on the desktop, so the frontend can create shortcuts for them one by one
+        return "success"
 
     @staticmethod
     def change_preset(presetName:str, presetNewName:str, presetNewDesc:str):
@@ -292,3 +295,5 @@ class PresetManager:
         with open(os.path.join(PRESETS_DIRECTORY,'lastPreset.cfg'), 'w') as configfile:
             config.write(configfile)
             
+
+PresetManager.create_preset("test022", "testdesc")

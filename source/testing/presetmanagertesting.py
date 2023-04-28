@@ -6,7 +6,7 @@
 
 import sys
 sys.path.append('source') 
-from presetmanager import presetManager as pmgr
+from dataHandlers.presetManager import PresetManager as pmgr
 
 #from source import presetManager as pmgr
 
@@ -16,10 +16,10 @@ from presetmanager import presetManager as pmgr
 
 # print("[Test 1] > Creating a preset with name")
 # presName = input("[Test 1] Name of new preset: ")
-# pmgr.create_preset(presName)
-
+# description = "sample description"
+# result = pmgr.create_preset(presName, description)
+# print(result)
 # print("[Test 1] > Executed command. Check your files!")
-# confirm = input("Press a button to continue...")
 
 # # Test 2:
 
@@ -29,11 +29,11 @@ from presetmanager import presetManager as pmgr
 # print("[Test 2] > Executed command. ")
 # userInput = input("Press a button to continue...")
 
-# # Test 3:
+# Test 3:
 
+# presName = "testpreset"
 # print("[Test 3] > Loading preset ")
 # pmgr.load_preset(presName)
-
 # print("[Test 3] > Executed command. Check your desktop!")
 # userInput = input("Press a button to continue...")
 
@@ -71,9 +71,9 @@ from presetmanager import presetManager as pmgr
 
 # Test 7:
 
-print("[Test 7] > Creating a preset with name")
-presName = input("[Test 1] Name of new preset: ")
-file_paths = pmgr.create_preset(presName, "exampledesc")
+# print("[Test 7] > Creating a preset with name")
+# presName = input("[Test 1] Name of new preset: ")
+# file_paths = pmgr.create_preset(presName, "exampledesc")
 
 #i = 1
 #for filepath in file_paths:
