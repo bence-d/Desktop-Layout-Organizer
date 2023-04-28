@@ -8,6 +8,11 @@ __pycache__/
 *$py.class
 
 # C extensions
+
+#Desktop-Layout-Organizer
+source/eelui/pyvenv.cfg
+
+
 *.so
 
 # Distribution / packaging
