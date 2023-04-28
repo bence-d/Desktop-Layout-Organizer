@@ -10,7 +10,7 @@ __pycache__/
 # C extensions
 
 #Desktop-Layout-Organizer
-source/eelui/pyvenv.cfg
+#source\eelui\pyvenv.py  ---- eine datei die gepusht wurde, kann man nicht .giginore machen
 privateTesting.py
 
 *.so
