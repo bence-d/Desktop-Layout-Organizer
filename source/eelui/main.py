@@ -11,20 +11,29 @@ def saysomething(name, desc):
     print(" ")
 
 @eel.expose
-def createpreset(name, desc):
-    pmgr.create_preset(name, desc)
+def create_preset(name, desc):
+    return pmgr.create_preset(name, desc)
 
 @eel.expose
-def refreshDropdown():
+def refresh_table():
     presetList = pmgr.get_all_entries()
 
     if presetList:
         for actPres in presetList:
-            # presetListNames.append(actPres.name)
-            eel.add_preset_to_dropdown(actPres.name)  # This calls the Javascript function
+            eel.addPresetToTable(actPres.name, actPres.description)  # This calls the Javascript function
 
 @eel.expose
-def deletepreset(preseToDel):
+def refresh_edit_dropdown():
+    presetList = pmgr.get_all_entries()
+
+    if presetList:
+        for actPres in presetList:
+            eel.addPresetToEditDropdown(actPres.name, actPres.description) # This calls the Javascript function
+    else:
+        eel.foundNoPresets() # This calls the Javascript function, which disables the update button
+
+@eel.expose
+def delete_preset(preseToDel):
     pmgr.delete_preset(preseToDel)
 
 @eel.expose

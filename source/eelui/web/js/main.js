@@ -10,8 +10,14 @@
         }, 1);
     };
     spinner();
+
+    // Sidebar Toggler
+    $('.sidebar-toggler').click(function () {
+        $('.sidebar, .content').toggleClass("open");
+        return false;
+    });
     
-    
+    /*
     // Back to top button
     $(window).scroll(function () {
         if ($(this).scrollTop() > 300) {
@@ -22,13 +28,6 @@
     });
     $('.back-to-top').click(function () {
         $('html, body').animate({scrollTop: 0}, 1500, 'easeInOutExpo');
-        return false;
-    });
-
-
-    // Sidebar Toggler
-    $('.sidebar-toggler').click(function () {
-        $('.sidebar, .content').toggleClass("open");
         return false;
     });
 
@@ -58,12 +57,13 @@
         nav : false
     });
 
+    */
 
     // Chart Global Color
     Chart.defaults.color = "#6C7293";
     Chart.defaults.borderColor = "#000000";
 
-
+    /*
     // Worldwide Sales Chart
     var ctx1 = $("#worldwide-sales").get(0).getContext("2d");
     var myChart1 = new Chart(ctx1, {
@@ -91,8 +91,9 @@
             responsive: true
         }
     });
+    */
 
-
+    /*
     // Salse & Revenue Chart
     var ctx2 = $("#salse-revenue").get(0).getContext("2d");
     var myChart2 = new Chart(ctx2, {
@@ -117,7 +118,6 @@
             responsive: true
         }
     });
-    
 
 
     // Single Line Chart
@@ -160,8 +160,9 @@
             responsive: true
         }
     });
+    */
 
-
+    /*
     // Pie Chart
     var ctx5 = $("#pie-chart").get(0).getContext("2d");
     var myChart5 = new Chart(ctx5, {
@@ -206,6 +207,7 @@
             responsive: true
         }
     });
+    */
 
     
 })(jQuery);
