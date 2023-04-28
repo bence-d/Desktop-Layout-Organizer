@@ -11,7 +11,7 @@ __pycache__/
 
 #Desktop-Layout-Organizer
 source/eelui/pyvenv.cfg
-
+privateTesting.py
 
 *.so
 

@@ -5,7 +5,7 @@ import json
 import configparser
 
 from preset import Preset
-from shortcut_util import ShortcutUtil
+from shortcut_util import ShortcutUtil as shutil
 
 
 class PresetManager:
@@ -70,7 +70,7 @@ class PresetManager:
 
             if os.path.splitext(filepath)[1] == ".lnk":
 
-                target_path = shortcututil.return_shortcut_target(filepath)
+                target_path = shutil.return_shortcut_target(filepath)
                 files.append({"path": target_path, "name": os.path.basename(target_path)})
             else: 
                 # filepath = shutil.copy(filepath,os.path.join(REPOSITORY_DIRECTORY))
@@ -162,7 +162,7 @@ class PresetManager:
 
                     for file in preset['files']:
                         if os.path.splitext(file['path'])[1] == ".lnk":
-                            shortcututil.create_shortcut(file['path'], DESKTOP_PATH)
+                            shutil.create_shortcut(file['path'], DESKTOP_PATH)
                         else:
                             shutil.copy(file['path'], DESKTOP_PATH)
 
@@ -291,4 +291,15 @@ class PresetManager:
         # Write the ConfigParser object to the config file in located in the same directory as the script
         with open(os.path.join(PRESETS_DIRECTORY,'lastPreset.cfg'), 'w') as configfile:
             config.write(configfile)
+
+    @staticmethod
+    def import_preset(presetName:str, presetFile:str):
+        '''
+        Imports a preset from another JSON File\n
+        presetName: Name of the preset
+        '''
+
+        
+        
+
             
