@@ -35,6 +35,10 @@ class PresetEndpoints(Resource):
             
     def delete(self, presetId):
         return pmgr.delete_preset(presetId)
+    
+    def patch(self, presetId):
+        data = request.get_json()
+        return pmgr.change_preset(presetId, data['name'], data['description'], data['files'])
 
 class PresetListEndpoints(Resource):
     def get(self):
