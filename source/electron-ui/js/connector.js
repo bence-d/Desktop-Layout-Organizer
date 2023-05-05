@@ -1,3 +1,7 @@
+// Global Variables
+
+presets = []
+
 // +++ AJAX Requests +++
 
 function getAllPresets(callback) {
@@ -31,7 +35,7 @@ function addPreset(presetName, presetDescription, callback) {
     });
 }
 
-// +++ CallBack functions for the AJAX Requests +++
+// +++ Callback functions for the AJAX Requests +++
 
 function fillListWithPresets(response) {
   // get the element with the id 'presetHolderTableBody' via jQuery and delete all its child elements
@@ -121,3 +125,75 @@ function createPreset() {
     let presetDescription = $('#input_preset_description').val();
     addPreset(presetName, presetDescription, getAllPresets());
 }
+
+function fillPresetEditorDropdown(response) {
+    presets = response;
+
+    // get the element with the id 'presetHolderTableBody' via jQuery and delete all its child elements
+    
+    let presetEditorDropdown = $('#preset-editor-dropdown');
+    presetEditorDropdown.empty();
+
+    // for each preset in the response variable
+    for (var i = 0; i < response.length; i++) {
+        // building a table row
+        let option = '<option value="' + response[i].id + '">' + response[i].name + '</option>';
+
+        presetEditorDropdown.append(option);
+    }
+
+    if (response) {
+      fillPresetEditorForm(response[0].id);
+    }
+}
+
+function fillPresetEditorForm(presetId) {
+  // search for the preset with the given id in the variable 'presets'
+  for (var i = 0; i < presets.length; i++) {
+    if (presets[i].id == presetId) {
+      $('#inputName').val(presets[i].name);
+      $('#inputDescription').val(presets[i].description);
+      
+      // get the element with the id 'fileHolderTableBody' via jQuery and delete all its child elements
+      $('#fileHolderTableBody').empty();
+
+      // add a row to each file in the table 'fileHolderTableBody' that's found in the preset with the id 'presetId'
+      for (var j = 0; j < presets[i].files.length; j++) {
+        var fileNameTD = '<td>' + presets[i].files[j].name + '</td>';
+        var filePathTD = '<td class="filePathTD">' + presets[i].files[j].path + '</td>';
+        
+        // actions
+        let td_actions = '<td class="actionsTD">'
+        td_actions += '<a class="btn btn-sm btn-primary mx-1" href=""><i class="fa fa-trash me-2 mx-2"></i></a>';
+        td_actions += '</td>';
+
+        var fileRow = '<tr>' + fileNameTD + filePathTD + td_actions + '</tr>';
+
+        $('#fileHolderTableBody').append(fileRow);
+      }
+    }
+  }
+}
+
+// +++ Event Listeners +++
+
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(function () {
+    'use strict'
+  
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.querySelectorAll('.needs-validation')
+  
+    // Loop over them and prevent submission
+    Array.prototype.slice.call(forms)
+      .forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+  
+          form.classList.add('was-validated')
+        }, false)
+      })
+})()
