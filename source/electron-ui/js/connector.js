@@ -122,6 +122,21 @@ function createPreset() {
     addPreset(presetName, presetDescription, getAllPresets());
 }
 
+function fillPresetEditorDropdown(response) {
+    // get the element with the id 'presetHolderTableBody' via jQuery and delete all its child elements
+    
+    let presetEditorDropdown = $('#preset-editor-dropdown');
+    presetEditorDropdown.empty();
+
+    // for each preset in the response variable
+    for (var i = 0; i < response.length; i++) {
+        // building a table row
+        let option = '<option value="' + response[i].id + '">' + response[i].name + '</option>';
+
+        presetEditorDropdown.append(option);
+    }
+}
+
 // +++ Event Listeners +++
 
 // Example starter JavaScript for disabling form submissions if there are invalid fields
@@ -141,20 +156,6 @@ function createPreset() {
           }
   
           form.classList.add('was-validated')
-
-          var validator = $("#presetEditorDropdown").data("bootstrapValidator");
-          validator.validate();
-          if(!validator.isValid()) { 
-              alert("not valid");
-              if ($('#presetSelectorWarning').hasClass('hidden')) {
-                  $('#presetSelectorWarning').removeClass('hidden') 
-              }
-          } else {
-              alert("valid");
-              if (!$('#presetSelectorWarning').hasClass('hidden')) {
-                  $('#presetSelectorWarning').addClass('hidden')
-              }
-          }
         }, false)
       })
 })()

@@ -8,7 +8,6 @@
     <meta content="" name="keywords">
     <meta content="" name="description">
 
-    <script type="text/javascript" src="eel.js"></script>
     <script src="./js/connector.js"></script>
 
     <!-- Favicon -->
@@ -191,7 +190,7 @@
         window.onload = function() {
             if (window.jQuery) {  
                 // jQuery is loaded  
-                fillPresetEditorDropdown();
+                getAllPresets(fillPresetEditorDropdown);
             }
         }
     </script>
