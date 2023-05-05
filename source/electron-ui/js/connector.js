@@ -141,6 +141,10 @@ function fillPresetEditorDropdown(response) {
 
         presetEditorDropdown.append(option);
     }
+
+    if (response) {
+      fillPresetEditorForm(response[0].id);
+    }
 }
 
 function fillPresetEditorForm(presetId) {
