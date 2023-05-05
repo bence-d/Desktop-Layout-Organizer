@@ -3,6 +3,7 @@ import shutil
 import subprocess
 import json
 import configparser
+import pythoncom
 
 from dataHandlers.preset import Preset
 from dataHandlers.shortcut_util import ShortcutUtil
@@ -27,6 +28,8 @@ class PresetManager:
 
     @staticmethod
     def create_preset(presetName:str, presetDescription:str):
+        pythoncom.CoInitialize()
+        print("Creating preset...")
         # Developer mode
         if (DEVELOPER_MODE):
             DESKTOP_PATH = os.path.join(os.path.expanduser('~'), 'Desktop\\DLODEV')
@@ -41,6 +44,8 @@ class PresetManager:
 
         # Set the directory where the files are located
         presetsRaw = []
+
+        print("Loading PresetList...")
  
         # 1: load the .json file that stores the presets
         if PresetManager.file_is_empty(PRESET_LIST_FILE_NAME) != True:
@@ -57,27 +62,46 @@ class PresetManager:
             for preset in presetList['presets']:
                 presetsRaw.append(Preset.to_Preset(preset))
 
+        print('exporting registry: ' + f'reg export HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\Shell\Bags\\1\Desktop "{os.path.join(PRESETS_DIRECTORY, presetName)}.reg"')
+
         # 5: Export the registry key to the registryDirectory
-        subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(PRESETS_DIRECTORY, presetName)}.reg", shell=True)
+        subprocess.call(f'reg export HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\Shell\Bags\\1\Desktop "{os.path.join(PRESETS_DIRECTORY, presetName)}.reg"', shell=True)
+
+        print("Getting files from the desktop...")
 
         # Getting the files from the desktop
         file_list = [f for f in os.listdir(DESKTOP_PATH) ]
         file_paths = [os.path.join(DESKTOP_PATH, f) for f in file_list]
 
+        print("adding files to the preset...")
+
         #Adding files to the preset
         files = [] 
         for filepath in file_paths:
             #copy files to repository and then delete them from desktop
+
+            print("checking if file is a link or a file...")
             if os.path.splitext(filepath)[1] == ".lnk":
+                print("file is a link")
+                print("getting shotrcut target...")
+                print("presetname: " + presetName)
+                print("presetdesc: " + presetDescription)
                 target_path = ShortcutUtil.return_shortcut_target(filepath)
+                print("adding file to the presetlist...")
                 files.append({"path": target_path, "name": os.path.basename(target_path)})
             else: 
+                print("copying file into repostiory")
                 newFilePath = shutil.copy(filepath,os.path.join(REPOSITORY_DIRECTORY))
+                print("deleting file from desktop")
                 os.remove(filepath)
+                print("creating shortcut on desktop")
                 ShortcutUtil.create_shortcut(newFilePath, DESKTOP_PATH)
+                print("adding file to the presetlist...")
                 files.append({"path": filepath, "name": os.path.basename(filepath)})
 
         # Adding the new entry to the 'presetlist.json'
+
+        print("adding preset to the presetlist...")
 
         presetId = PresetManager.get_next_available_id()
 
