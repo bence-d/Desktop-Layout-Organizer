@@ -38,6 +38,11 @@
         .hidden {
             display: none;
         }
+
+        .filePathTD {
+            max-width: 25vw;
+            overflow-x: scroll;
+        }
     </style>
 </head>
 
@@ -86,7 +91,7 @@
 
            <!-- Form Start -->
            <div class="container-fluid pt-4 px-4">
-                <div class="row g-4">
+                <div class="row g-3">
                     <div class="col-sm-12 col-xl-6">
                         <div class="bg-secondary rounded h-100 p-4">
                             <h6 class="mb-4">Edit a preset</h6>
@@ -114,8 +119,8 @@
 
                                 <div class="mb-3">
                                     <div>
-                                        <label for="descriptionInput" class="form-label">Description</label>
-                                        <input type="text" class="form-control" id="descriptionInput">
+                                        <label for="inputDescription" class="form-label">Description</label>
+                                        <input type="text" class="form-control" id="inputDescription">
                                     </div>
                                 </div>
 
@@ -126,13 +131,12 @@
                                         <table class="table text-start align-middle table-bordered table-hover">
                                             <thead>
                                                 <tr class="text-white">
-                                                    <th scope="col"></th>
-                                                    <th scope="col">Name</th>
-                                                    <th scope="col">Path</th>
-                                                    <th scope="col">Actions</th>
+                                                    <th >Name</th>
+                                                    <th class="w-40">Path</th>
+                                                    <th class="w-5">Actions</th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="presetHolderTableBody">
+                                            <tbody id="fileHolderTableBody">
                                             </tbody>
                                         </table>
                                     </div>
