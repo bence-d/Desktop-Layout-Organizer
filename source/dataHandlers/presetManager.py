@@ -111,7 +111,7 @@ class PresetManager:
         return presetToAdd
 
     @staticmethod
-    def change_preset(presetID:int, presetNewName:str, presetNewDesc:str):
+    def change_preset(presetID:int, presetNewName:str, presetNewDesc:str, presetNewFiles:list):
         '''
         Changes the name and description of a preset\n
         presetID: ID of the preset\n
@@ -127,19 +127,25 @@ class PresetManager:
             presetList = json.load(fp)
 
             for preset in presetList['presets']:
-                if preset['id'] == presetID:
+                print("comparing " + str(preset['id']) + "[type " + str(type(preset['id'])) + "]" + " with " + str(presetID) + "[type " + str(type(presetID)) + "]")
+                if preset['id'] == str(presetID):
 
                     preset['name'] = presetNewName
                     preset['description'] = presetNewDesc
+                    preset['files'] = presetNewFiles
 
                     presetsRaw = []
-                    for preset in presetList['presets']:
-                        presetsRaw.append(Preset.to_Preset(preset))
+                    for actPresetToAddToList in presetList['presets']:
+                        presetsRaw.append(Preset.to_Preset(actPresetToAddToList))
 
-                    presetsJSON = PresetManager.getPresetsInJsonFormat(presetsRaw)
+                    presetsJSON = PresetManager.get_presets_in_json_format(presetsRaw)
 
                     with open(f"{PRESET_LIST_FILE_NAME}", "w") as outfile:
                         outfile.write(presetsJSON)
+
+                    return preset
+                
+        return "ERROR: No preset found with id'" + str(presetID) + "'"
 
     @staticmethod
     def save_preset(presetName:str):
