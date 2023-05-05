@@ -4,22 +4,32 @@
 # tested, the testing should be done partly with this script and manually.          #
 #####################################################################################
 
+# 1) Get relative path to this file
+import os
 import sys
-sys.path.append('source') 
+pathToDataHandlers = os.path.dirname(os.path.realpath(__file__))
+
+# 2) Go to the parent folder 
+pathToDataHandlers = os.path.abspath(os.path.join(pathToDataHandlers, os.pardir))
+
+# 3) Add the folder containing 'dataHandlers' to the system path
+sys.path.append(pathToDataHandlers)
+
+# 4) Import the dataHandlers
 from dataHandlers.presetManager import PresetManager as pmgr
 
 #from source import presetManager as pmgr
 
 # print("-> Started Tests...")
 
-# # Test 1:
+# Test 1:
 
-# print("[Test 1] > Creating a preset with name")
-# presName = input("[Test 1] Name of new preset: ")
-# description = "sample description"
-# result = pmgr.create_preset(presName, description)
-# print(result)
-# print("[Test 1] > Executed command. Check your files!")
+print("[Test 1] > Creating a preset with name")
+presName = input("[Test 1] Name of new preset: ")
+description = "sample description"
+result = pmgr.create_preset(presName, description)
+print(result)
+print("[Test 1] > Executed command. Check your files!")
 
 # # Test 2:
 
