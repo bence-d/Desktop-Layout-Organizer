@@ -31,7 +31,7 @@ function addPreset(presetName, presetDescription, callback) {
     });
 }
 
-// +++ CallBack functions for the AJAX Requests +++
+// +++ Callback functions for the AJAX Requests +++
 
 function fillListWithPresets(response) {
   // get the element with the id 'presetHolderTableBody' via jQuery and delete all its child elements
@@ -121,3 +121,40 @@ function createPreset() {
     let presetDescription = $('#input_preset_description').val();
     addPreset(presetName, presetDescription, getAllPresets());
 }
+
+// +++ Event Listeners +++
+
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(function () {
+    'use strict'
+  
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.querySelectorAll('.needs-validation')
+  
+    // Loop over them and prevent submission
+    Array.prototype.slice.call(forms)
+      .forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+  
+          form.classList.add('was-validated')
+
+          var validator = $("#presetEditorDropdown").data("bootstrapValidator");
+          validator.validate();
+          if(!validator.isValid()) { 
+              alert("not valid");
+              if ($('#presetSelectorWarning').hasClass('hidden')) {
+                  $('#presetSelectorWarning').removeClass('hidden') 
+              }
+          } else {
+              alert("valid");
+              if (!$('#presetSelectorWarning').hasClass('hidden')) {
+                  $('#presetSelectorWarning').addClass('hidden')
+              }
+          }
+        }, false)
+      })
+})()

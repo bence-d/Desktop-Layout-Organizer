@@ -32,6 +32,14 @@
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
+
+    <!-- Customized Stylesheet -->
+
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
@@ -83,21 +91,59 @@
                     <div class="col-sm-12 col-xl-6">
                         <div class="bg-secondary rounded h-100 p-4">
                             <h6 class="mb-4">Edit a preset</h6>
-                            <form>
-                                <div class="mb-3">
-                                    <label for="presetSelector" class="form-label">Preset</label>
-                                    <select class="form-control" name="presetSelector" id="presetEditorDropdown">
+
+                            <form class="needs-validation" novalidate> <!-- was-validated -->
+                                <div class="my-3">
+                                    <select class="form-select" id="preset-editor-dropdown" onchange="fillPresetEditorForm(this.value)" required>
+                                        <option value="">Select a preset</option>
                                     </select>
+                                    <div class="invalid-feedback">Please select a preset.</div>
                                 </div>
-                                <div class="mb-3">
+
+                                
+                                <!-- Name auswählen -->
+                                
+                                <div class="my-3">
                                     <label for="inputName" class="form-label">Name</label>
-                                    <input type="text" class="form-control" id="inputName">
+                                    <input type="text" class="form-control" id="inputName" required minlength="3">
+                                    <div class="invalid-feedback">
+                                        Name must contain at least 3 characters.
+                                    </div>
                                 </div>
+
+                                <!-- Beschreibung auswählen -->
+
                                 <div class="mb-3">
-                                    <label for="descriptionInput" class="form-label">Description</label>
-                                    <input type="text" class="form-control" id="inputDescription">
+                                    <div>
+                                        <label for="descriptionInput" class="form-label">Description</label>
+                                        <input type="text" class="form-control" id="descriptionInput">
+                                    </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary" onclick="alert('not implemented yet')" id="input_update_button">Update</button>
+
+                                <!-- Dateien auswählen -->
+                                
+                                <div class="mb-3">
+                                    <div class="table-responsive">
+                                        <table class="table text-start align-middle table-bordered table-hover">
+                                            <thead>
+                                                <tr class="text-white">
+                                                    <th scope="col"></th>
+                                                    <th scope="col">Name</th>
+                                                    <th scope="col">Path</th>
+                                                    <th scope="col">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="presetHolderTableBody">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Es muss mindestens eine Datei im Preset verbleiben.
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary" onclick="" id="input_update_button">Update</button>
+                            
                             </form>
                         </div>
                     </div>
