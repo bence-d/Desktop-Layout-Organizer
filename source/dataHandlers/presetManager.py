@@ -364,40 +364,7 @@ class PresetManager:
         # Write the ConfigParser object to the config file in located in the same directory as the script
         with open(os.path.join(PRESETS_DIRECTORY,'lastPreset.cfg'), 'w') as configfile:
             config.write(configfile)
-
-    @staticmethod
-    def import_preset(presetFile:str, presetName:str):
-        '''
-        Imports a preset from another JSON File\n
-        presetName: Name of the preset
-        presetFile: absolute Path to the JSON File
-        '''
-
-        # Checking if the file exists, is a JSON File, is not empty and if the preset already exists in the presetlist.json
-        if (not os.path.exists(presetFile) or 
-            os.path.splitext(presetFile)[1] != ".json" or
-            PresetManager.file_is_empty(presetFile) or 
-            PresetManager.preset_exists(presetName)):
-
-            return
-        
-        # Reading the JSON File
-        with open(presetFile) as fp:
-            presetList = json.load(fp)
-
-        #Finding the preset in the JSON File
-        for preset in presetList['presets']:
-            if preset['name'] == presetName:
-
-                # Creating the preset
-                PresetManager.create_preset(presetName, preset['files'], preset['registry'])
-
-                # Adding the preset to the presetlist.json
-                PresetManager.add_preset_to_list(presetName, preset['files'], preset['registry'])
-
-                break
-
-        
+   
     @staticmethod
     def preset_exists(presetName:str):
         '''
@@ -410,80 +377,79 @@ class PresetManager:
                 return True
         return False
 
-@staticmethod     
-def import_preset(source_file:str, destination_file:str, preset_name:str):
-    '''
-    Imports a preset from a source file to a destination file\n
-    :param source_file: The source file to import the preset from\n
-    :param destination_file: The destination file to import the preset to\n
-    :param preset_name: The name of the preset to import\n
-    :return: True if the preset was imported successfully, False otherwise\n
-    '''
-    # Load the source file
-    with open(source_file, 'r') as source:
-        source_data = json.load(source)
+    @staticmethod     
+    def import_preset(source_file:str, destination_file:str, preset_name:str):
+        '''
+        Imports a preset from a source file to a destination file\n
+        :param source_file: The source file to import the preset from\n
+        :param destination_file: The destination file to import the preset to\n
+        :param preset_name: The name of the preset to import\n
+        :return: True if the preset was imported successfully, False otherwise\n
+        '''
+        # Load the source file
+        with open(source_file, 'r') as source:
+            source_data = json.load(source)
 
-    # Load the destination file, if it exists
-    try:
-        with open(destination_file, 'r') as destination:
-            destination_data = json.load(destination)
-    except FileNotFoundError:
-        # If the destination file doesn't exist, create an empty dictionary
-        destination_data = {"presets": []}
+        # Load the destination file, if it exists
+        try:
+            with open(destination_file, 'r') as destination:
+                destination_data = json.load(destination)
+        except FileNotFoundError:
+            # If the destination file doesn't exist, create an empty dictionary
+            destination_data = {"presets": []}
 
-    # Check if the preset already exists in the destination file
-    for preset in destination_data['presets']:
-        if preset['name'] == preset_name:
-            print("The preset already exists in the destination file. Import aborted.")
+        # Check if the preset already exists in the destination file
+        for preset in destination_data['presets']:
+            if preset['name'] == preset_name:
+                print("The preset already exists in the destination file. Import aborted.")
+                return False
+
+        # Find the specific preset object in the source file
+        found_preset = None
+        for preset in source_data['presets']:
+            if preset['name'] == preset_name:
+                found_preset = preset
+                break
+
+        if found_preset is None:
+            print("The specified preset was not found in the source file.")
             return False
 
-    # Find the specific preset object in the source file
-    found_preset = None
-    for preset in source_data['presets']:
-        if preset['name'] == preset_name:
-            found_preset = preset
-            break
+        # Copy the preset object to the destination file
+        destination_data['presets'].append(found_preset)
 
-    if found_preset is None:
-        print("The specified preset was not found in the source file.")
-        return False
+        # Save the updated destination file
+        with open(destination_file, 'w') as destination:
+            json.dump(destination_data, destination, indent=4)
 
-    # Copy the preset object to the destination file
-    destination_data['presets'].append(found_preset)
+        print("The preset was successfully imported.")
+        return True
+                
+        @staticmethod
+        def get_next_available_id():
+            '''
+            Returns the next available id
+            '''
+            highest_id = -1
 
-    # Save the updated destination file
-    with open(destination_file, 'w') as destination:
-        json.dump(destination_data, destination, indent=4)
-
-    print("The preset was successfully imported.")
-    return True
+            presets = PresetManager.get_all_entries()
+            for preset in presets:
+                if int(preset.id) > int(highest_id):
+                    highest_id = preset.id
             
+            highest_id = int(highest_id) + 1
+
+            return str(highest_id)
+
     @staticmethod
-    def get_next_available_id():
+    def export_preset(source_file:str, destination_file:str, preset_name:str):
         '''
-        Returns the next available id
+        Exports a preset from a source file to a destination file\n
+        :param source_file: The source file to export the preset from\n
+        :param destination_file: The destination file to export the preset to\n
+        :param preset_name: The name of the preset to export\n
+        :return: True if the preset was exported successfully, False otherwise\n
         '''
-        highest_id = -1
 
-        presets = PresetManager.get_all_entries()
-        for preset in presets:
-            if int(preset.id) > int(highest_id):
-                highest_id = preset.id
-        
-        highest_id = int(highest_id) + 1
-
-        return str(highest_id)
-
-
-@staticmethod
-def export_preset(source_file:str, destination_file:str, preset_name:str):
-    '''
-    Exports a preset from a source file to a destination file\n
-    :param source_file: The source file to export the preset from\n
-    :param destination_file: The destination file to export the preset to\n
-    :param preset_name: The name of the preset to export\n
-    :return: True if the preset was exported successfully, False otherwise\n
-    '''
-
-    #import_preset and export_preset are the same function, the only difference is the order of the parameters
-    import_preset(destination_file,source_file,preset_name)
+        #import_preset and export_preset are the same function, the only difference is the order of the parameters
+        PresetManager.import_preset(destination_file,source_file,preset_name)
