@@ -41,7 +41,12 @@
 
         .filePathTD {
             max-width: 25vw;
-            overflow-x: scroll;
+            overflow-x: hidden;
+        }
+
+        #fileHolderTable {
+            max-height: 22vh;
+            overflow-y: scroll;
         }
     </style>
 </head>
@@ -126,14 +131,14 @@
 
                                 <!-- Dateien auswählen -->
                                 
-                                <div class="mb-3">
+                                <div class="my-3" id="fileHolderTable">
                                     <div class="table-responsive">
                                         <table class="table text-start align-middle table-bordered table-hover">
                                             <thead>
                                                 <tr class="text-white">
-                                                    <th >Name</th>
+                                                    <th> </th>
+                                                    <th>Name</th>
                                                     <th class="w-40">Path</th>
-                                                    <th class="w-5">Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="fileHolderTableBody">
@@ -146,7 +151,6 @@
                                 </div>
 
                                 <button type="submit" class="btn btn-primary" onclick="" id="input_update_button">Update</button>
-                            
                             </form>
                         </div>
                     </div>
@@ -189,7 +193,7 @@
     <script src="js/main.js"></script>
 
     <!-- Connector to the Python Backend -->
-    <script src="./js/connector.js"></script>
+    <script src="./js/presetEditor.js"></script>
     <script>
         window.onload = function() {
             if (window.jQuery) {  
