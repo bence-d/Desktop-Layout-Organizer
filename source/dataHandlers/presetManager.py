@@ -473,3 +473,17 @@ def import_preset(source_file, destination_file, preset_name):
         highest_id = int(highest_id) + 1
 
         return str(highest_id)
+
+
+@staticmethod
+def export_preset(source_file, destination_file, preset_name):
+    '''
+    Exports a preset from a source file to a destination file\n
+    :param source_file: The source file to export the preset from\n
+    :param destination_file: The destination file to export the preset to\n
+    :param preset_name: The name of the preset to export\n
+    :return: True if the preset was exported successfully, False otherwise\n
+    '''
+
+    #import_preset and export_preset are the same function, the only difference is the order of the parameters
+    import_preset(destination_file,source_file,preset_name)
