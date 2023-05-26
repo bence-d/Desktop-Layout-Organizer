@@ -7,6 +7,7 @@
 # 1) Get relative path to this file
 import os
 import sys
+
 pathToDataHandlers = os.path.dirname(os.path.realpath(__file__))
 
 # 2) Go to the parent folder 
