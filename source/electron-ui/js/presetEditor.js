@@ -125,8 +125,20 @@ function reloadPresetListAfterChange() {
                     presets[i].name = $('#inputName').val();
                     presets[i].description = $('#inputDescription').val();
 
-                    // #5 remove the unchecked files from the selected preset and save it in the global variable 'presets'
-                    
+                    // #5 check if there will be any files left in the preset after the deleting the unchecked ones
+                    var presetsUnchecked = 0;
+
+                    $('#fileHolderTableBody').children().each(function () {
+                      if (!$(this).find('input').prop('checked')) {
+                        presetsUnchecked++;
+                      }
+                    });
+
+                    // todo: make an input that counts the remaning children, and make a bootstrap validator that shows the
+                    // was-validated div beneath if the number of remaining children is 0
+
+                    // #6 remove the unchecked files from the selected preset and save it in the global variable 'presets'
+
                     $('#fileHolderTableBody').children().each(function () {
                       if (!$(this).find('input').prop('checked')) {
                         
