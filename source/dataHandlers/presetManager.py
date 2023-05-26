@@ -453,3 +453,16 @@ class PresetManager:
 
         #import_preset and export_preset are the same function, the only difference is the order of the parameters
         PresetManager.import_preset(destination_file,source_file,preset_name)
+
+    @staticmethod
+    def get_next_available_id():
+        highest_id = -1
+
+        presets = PresetManager.get_all_entries()
+        for preset in presets:
+            if int(preset.id) > int(highest_id):
+                highest_id = preset.id
+
+        highest_id = int(highest_id) + 1
+
+        return str(highest_id)
