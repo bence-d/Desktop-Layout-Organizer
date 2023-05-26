@@ -411,7 +411,7 @@ class PresetManager:
         return False
 
 @staticmethod     
-def import_preset(source_file, destination_file, preset_name):
+def import_preset(source_file:str, destination_file:str, preset_name:str):
     '''
     Imports a preset from a source file to a destination file\n
     :param source_file: The source file to import the preset from\n
@@ -476,7 +476,7 @@ def import_preset(source_file, destination_file, preset_name):
 
 
 @staticmethod
-def export_preset(source_file, destination_file, preset_name):
+def export_preset(source_file:str, destination_file:str, preset_name:str):
     '''
     Exports a preset from a source file to a destination file\n
     :param source_file: The source file to export the preset from\n
