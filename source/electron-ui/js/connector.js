@@ -1,4 +1,6 @@
 // +++ Global Variables +++
+sortedAscended = true;
+lastSortedIdx = 0;
 
 // +++ AJAX Requests +++
 
@@ -122,4 +124,59 @@ function createPreset() {
     let presetName = $('#input_preset_name').val();
     let presetDescription = $('#input_preset_description').val();
     addPreset(presetName, presetDescription, getAllPresets());
+}
+
+function sortTable(columnIndex) {
+    var table, rows, switching, i, x, y, shouldSwitch;
+
+    table = document.getElementById("presetHolderTableBody");
+    switching = true;
+
+    
+    if (lastSortedIdx != columnIndex) {
+        sortedAscended = true;
+    } else {
+        sortedAscended = !sortedAscended;
+    }
+
+
+    /* Make a loop that will continue until no switching has been done: */
+
+    while (switching) {
+        // Start by saying: no switching is done:
+        switching = false;
+        rows = $('#fileHolderTableBody').children();
+        
+        /* Loop through all table rows (except the first, which contains table headers): */
+        for (i = 1; i < (rows.length - 1); i++) {
+            // Start by saying there should be no switching:
+            shouldSwitch = false;
+            
+            /* Get the two elements you want to compare, one from current row and one from the next: */
+            x = rows[i].getElementsByTagName("TD")[columnIndex];
+            y = rows[i + 1].getElementsByTagName("TD")[columnIndex];
+
+            if (sortedAscended) {
+                // Check if the two rows should switch place:
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    // If so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                }
+            } else {
+                // Check if the two rows should switch place:
+                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                    // If so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+        
+        if (shouldSwitch) {
+            /* If a switch has been marked, make the switch and mark that a switch has been done: */
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+        }
+    }
 }
