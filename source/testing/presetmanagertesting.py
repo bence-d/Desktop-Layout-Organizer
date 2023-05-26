@@ -4,22 +4,33 @@
 # tested, the testing should be done partly with this script and manually.          #
 #####################################################################################
 
+# 1) Get relative path to this file
+import os
 import sys
-sys.path.append('source') 
-from presetManager import presetManager as pmgr
+
+pathToDataHandlers = os.path.dirname(os.path.realpath(__file__))
+
+# 2) Go to the parent folder 
+pathToDataHandlers = os.path.abspath(os.path.join(pathToDataHandlers, os.pardir))
+
+# 3) Add the folder containing 'dataHandlers' to the system path
+sys.path.append(pathToDataHandlers)
+
+# 4) Import the dataHandlers
+from dataHandlers.presetManager import PresetManager as pmgr
 
 #from source import presetManager as pmgr
 
 # print("-> Started Tests...")
 
-# # Test 1:
+# Test 1:
 
-# print("[Test 1] > Creating a preset with name")
-# presName = input("[Test 1] Name of new preset: ")
-# pmgr.create_preset(presName)
-
-# print("[Test 1] > Executed command. Check your files!")
-# confirm = input("Press a button to continue...")
+print("[Test 1] > Creating a preset with name")
+presName = input("[Test 1] Name of new preset: ")
+description = "sample description"
+result = pmgr.create_preset(presName, description)
+print(result)
+print("[Test 1] > Executed command. Check your files!")
 
 # # Test 2:
 
@@ -29,11 +40,11 @@ from presetManager import presetManager as pmgr
 # print("[Test 2] > Executed command. ")
 # userInput = input("Press a button to continue...")
 
-# # Test 3:
+# Test 3:
 
+# presName = "testpreset"
 # print("[Test 3] > Loading preset ")
 # pmgr.load_preset(presName)
-
 # print("[Test 3] > Executed command. Check your desktop!")
 # userInput = input("Press a button to continue...")
 
@@ -71,9 +82,9 @@ from presetManager import presetManager as pmgr
 
 # Test 7:
 
-print("[Test 7] > Creating a preset with name")
-presName = input("[Test 1] Name of new preset: ")
-file_paths = pmgr.create_preset(presName, "exampledesc")
+# print("[Test 7] > Creating a preset with name")
+# presName = input("[Test 1] Name of new preset: ")
+# file_paths = pmgr.create_preset(presName, "exampledesc")
 
 #i = 1
 #for filepath in file_paths:
