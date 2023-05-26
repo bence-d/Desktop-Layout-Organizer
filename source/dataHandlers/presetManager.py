@@ -337,6 +337,52 @@ class PresetManager:
                 return True
         return False
 
-        
+@staticmethod     
+def import_preset(source_file, destination_file, preset_name):
+    '''
+    Imports a preset from a source file to a destination file\n
+    :param source_file: The source file to import the preset from\n
+    :param destination_file: The destination file to import the preset to\n
+    :param preset_name: The name of the preset to import\n
+    :return: True if the preset was imported successfully, False otherwise\n
+    '''
+    # Load the source file
+    with open(source_file, 'r') as source:
+        source_data = json.load(source)
 
-            
+    # Load the destination file, if it exists
+    try:
+        with open(destination_file, 'r') as destination:
+            destination_data = json.load(destination)
+    except FileNotFoundError:
+        # If the destination file doesn't exist, create an empty dictionary
+        destination_data = {"presets": []}
+
+    # Check if the preset already exists in the destination file
+    for preset in destination_data['presets']:
+        if preset['name'] == preset_name:
+            print("The preset already exists in the destination file. Import aborted.")
+            return False
+
+    # Find the specific preset object in the source file
+    found_preset = None
+    for preset in source_data['presets']:
+        if preset['name'] == preset_name:
+            found_preset = preset
+            break
+
+    if found_preset is None:
+        print("The specified preset was not found in the source file.")
+        return False
+
+    # Copy the preset object to the destination file
+    destination_data['presets'].append(found_preset)
+
+    # Save the updated destination file
+    with open(destination_file, 'w') as destination:
+        json.dump(destination_data, destination, indent=4)
+
+    print("The preset was successfully imported.")
+    return True
+
+
