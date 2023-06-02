@@ -32,6 +32,26 @@
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
+
+    <!-- Customized Stylesheet -->
+    <style>
+        .bg-progress-custom {
+            background-color: #EB1616;
+        }
+
+        .btn-outline:hover {
+            outline: 1px solid rgba(194, 194, 194);
+        }
+
+        .btn-outline {
+            box-shadow: 0px 0px 1px rgba(255, 255, 255, 0.418);
+        }
+
+        #create-progressbar-background {
+            background-color: #000000;
+        }
+
+    </style>
 </head>
 
 <body>
@@ -91,6 +111,16 @@
                                 <div class="mb-3">
                                     <label for="input_preset_description" class="form-label">Description</label>
                                     <input type="text" class="form-control" id="input_preset_description">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="create-progressbar-progress" class="form-label">Moving Files</label>
+                                    <div class="progress" id="create-progressbar-background" style="height: 3vh;">
+                                        <div class="progress-bar bg-progress-custom" role="progressbar" style="width: 25%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" id="create-progressbar-progress"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <button class="btn btn-secondary btn-outline" style="width: 49%;" disabled>Pause</button>
+                                    <button class="btn btn-secondary btn-outline" style="width: 49%;" disabled>Stop</button>
                                 </div>
                             </form>
                             <button type="submit" class="btn btn-primary" onclick="createPreset()">Create</button>
