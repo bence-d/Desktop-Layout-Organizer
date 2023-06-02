@@ -65,6 +65,14 @@ function fillListWithPresets(response) {
   }
 }
 
+function addFilesToPreset(response) {
+    // to do..
+    // finally call
+    // getAllPresets()
+    console.log("addFilesToPreset() response: " )
+    console.log(response)
+}
+
 // +++ Other functions +++
 
 var disableDeleteButton = true;
@@ -123,7 +131,7 @@ function deleteSelectedPresets() {
 function createPreset() {
     let presetName = $('#input_preset_name').val();
     let presetDescription = $('#input_preset_description').val();
-    addPreset(presetName, presetDescription, getAllPresets());
+    addPreset(presetName, presetDescription, addFilesToPreset());
 }
 
 function sortTable(columnIndex) {

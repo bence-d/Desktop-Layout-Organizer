@@ -66,31 +66,7 @@ class PresetManager:
         file_list = [f for f in os.listdir(DESKTOP_PATH) ]
         file_paths = [os.path.join(DESKTOP_PATH, f) for f in file_list]
 
-        #Adding files to the preset
-        files = [] 
-        for filepath in file_paths:
-            #copy files to repository and then delete them from desktop
-
-            if os.path.splitext(filepath)[1] == ".lnk":
-                #print("file is a link")
-                #print("getting shotrcut target...")
-                #print("presetname: " + presetName)
-                #print("presetdesc: " + presetDescription)
-                target_path = ShortcutUtil.return_shortcut_target(filepath)
-                #print("adding file to the presetlist...")
-                files.append({"path": target_path, "name": os.path.basename(target_path)})
-            else: 
-                #print("copying file into repostiory")
-                newFilePath = shutil.copy(filepath,os.path.join(REPOSITORY_DIRECTORY))
-                #print("deleting file from desktop")
-                os.remove(filepath)
-                #print("creating shortcut on desktop")
-                ShortcutUtil.create_shortcut(newFilePath, DESKTOP_PATH)
-                #print("adding file to the presetlist...")
-                files.append({"path": filepath, "name": os.path.basename(filepath)})
-
         # Adding the new entry to the 'presetlist.json'
-
         presetId = PresetManager.get_next_available_id()
 
         presetToAdd = Preset(
@@ -98,7 +74,7 @@ class PresetManager:
             f"{presetName}",
             f"{presetDescription}",
             f"C:\\Users\\Bence\\Desktop\\{presetName}.reg",
-            files)
+            []) # files to be added under the control of the user later of via the interface -> that's why it returns file_paths
         presetsRaw.append(presetToAdd) 
 
         # Converting Objects into a dictionary
@@ -108,7 +84,7 @@ class PresetManager:
             outfile.write(presetsJSON)
 
         # Returning the paths of the files that are on the desktop, so the frontend can create shortcuts for them one by one
-        return presetToAdd
+        return [presetId, file_paths]
 
     @staticmethod
     def change_preset(presetID:int, presetNewName:str, presetNewDesc:str, presetNewFiles:list):
@@ -466,3 +442,41 @@ class PresetManager:
         highest_id = int(highest_id) + 1
 
         return str(highest_id)
+    
+    @staticmethod
+    def add_file_to_preset(presetID: int, filepath:str):
+        '''
+        Adds a file to a preset\n
+        presetID: ID of the preset\n
+        filepath: Path of the file to add
+        '''
+        PresetManager.create_directories()
+
+        # Change to the registry directory
+        os.chdir(PRESETS_DIRECTORY)
+        
+        with open(PRESET_LIST_FILE_NAME) as fp:
+            presetList = json.load(fp)
+
+        for preset in presetList['presets']:
+            if preset['id'] == str(presetID):
+                preset['files'].append({"path": filepath})
+                break
+
+        # Turning Dictionary into an object
+        presetsRaw = []
+        for preset in presetList['presets']:
+            presetsRaw.append(Preset.to_Preset(preset))
+
+        presets = [obj.to_Dict() for obj in presetsRaw]
+        presets.sort(key=lambda obj: obj["name"])
+        presetsJSON = json.dumps({"presets": presets})
+
+        # Saving 'presetlist.json'
+        with open(f"{PRESET_LIST_FILE_NAME}", "r+") as outfile:
+            outfile.truncate(0)
+
+        with open(f"{PRESET_LIST_FILE_NAME}", "w") as outfile:
+            outfile.write(presetsJSON)
+
+        return
