@@ -466,3 +466,4 @@ class PresetManager:
         highest_id = int(highest_id) + 1
 
         return str(highest_id)
+    
