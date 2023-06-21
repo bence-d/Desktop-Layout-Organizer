@@ -2,6 +2,12 @@
 let sortedAscended = true;
 let lastSortedIdx = 0;
 
+let filesToAdd = [];
+let filesAdded = [];
+let presetData = [];
+let lastFileAddedIdx = 0;
+pause = false;
+
 // +++ AJAX Requests +++
 
 function getAllPresets(callback) {
@@ -35,6 +41,22 @@ function addPreset(presetName, presetDescription, callback) {
   });
 }
 
+function updatePreset(presetId, presetName, presetDescription, presetFiles, callback) {
+    $.ajax({
+        type: "PATCH",
+        url: "http://localhost:5000/id/" + presetId,
+        headers: {
+            "Content-Type": "application/json"
+        },
+        data: JSON.stringify({
+            name: presetName,
+            description: presetDescription,
+            files: presetFiles
+        }),
+        success: callback
+    });
+}
+
 // +++ Callback functions for the AJAX Requests +++
 
 function fillListWithPresets(response) {
@@ -65,7 +87,73 @@ function fillListWithPresets(response) {
   }
 }
 
+// param1: the new preset object
+// param2: list of files
+function addFilesToPreset(response) {
+
+    /* For each file of the preset, pass a list with the files that have already been added to the preset,
+        cause it's not gone move files anymore, only append them to the list in the backend.
+
+        Because .lnk files just get skipped, won't be moved but only added to the list in the presetlist.json file
+        See 'presetManager.py' for more information...
+        
+        example: 
+
+        [1]: 
+        updatepreset(6, "newPresetName", "newPresetDesc", "~/file1.txt")
+
+        [2]: 
+        updatepreset(6, "newPresetName", "newPresetDesc", "~/file1.txt", "~/file2.txt")
+
+        [3]: 
+        updatepreset(6, "newPresetName", "newPresetDesc", "~/file1.txt", "~/file2.txt", "~/file3.txt")
+        */
+
+    // finally call
+    // getAllPresets()
+    console.log("addFilesToPreset() response: " )
+    console.log(response)
+
+    console.log("starting to add files...")
+    
+    lastFileAddedIdx = 0
+    presetData = response[0]
+    filesToAdd = response[1]
+    filesAdded.push(response[1][lastFileAddedIdx])
+    updatePreset(response[0].id, response[0].name, response[0].description, filesAdded, null)
+    $("#create-progressbar-progress").css("width",  ((filesAdded.length / filesToAdd.length) * 100) +  "%");
+    $('#create-progressbar-progress').html(filesAdded.length + "/" + filesToAdd.length);
+    $('#create-pause-progress').removeAttr("disabled");
+    addNextFileToPreset()
+}
+
 // +++ Other functions +++
+
+async function addNextFileToPreset() {
+
+    do
+    {
+        lastFileAddedIdx++
+
+        if (lastFileAddedIdx < filesToAdd.length) {
+            console.log("adding file " + filesToAdd[lastFileAddedIdx] + " to preset")
+            filesAdded.push(filesToAdd[lastFileAddedIdx])
+            updatePreset(presetData.id, presetData.name, presetData.description, filesAdded, null)
+        }
+        
+        $("#create-progressbar-progress").css("width",  ((filesAdded.length / filesToAdd.length) * 100) +  "%");
+        $('#create-progressbar-progress').html(filesAdded.length + "/" + filesToAdd.length);
+
+        if (pause) {
+            break;
+        }
+
+        await sleep(500);
+    } while (lastFileAddedIdx+1 < filesToAdd.length);
+
+    await sleep(1500);
+    window.location.href = 'create.html';
+}
 
 var disableDeleteButton = true;
 
@@ -123,7 +211,7 @@ function deleteSelectedPresets() {
 function createPreset() {
     let presetName = $('#input_preset_name').val();
     let presetDescription = $('#input_preset_description').val();
-    addPreset(presetName, presetDescription, getAllPresets());
+    addPreset(presetName, presetDescription, addFilesToPreset);
 }
 
 function sortTable(columnIndex) {
@@ -186,4 +274,15 @@ function sortTable(columnIndex) {
             switching = true;
         }
     }
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function togglePause() {
+    pause = !pause;
+    addNextFileToPreset();
+
+    $('#create-pause-progress').html(pause ? "Resume" : "Pause");
 }

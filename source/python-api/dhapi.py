@@ -1,5 +1,6 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
+from pythoncom import CoInitialize
 
 # Adding DataHandlers to the system path so the python importer can find it
 
@@ -38,6 +39,7 @@ class PresetEndpoints(Resource):
     
     def patch(self, presetId):
         data = request.get_json()
+        # CoInitialize()
         return pmgr.change_preset(presetId, data['name'], data['description'], data['files'])
 
 class PresetListEndpoints(Resource):
@@ -51,7 +53,7 @@ class PresetListEndpoints(Resource):
     def post(self):
         data = request.get_json()
         response = pmgr.create_preset(data['name'], data['description'])
-        return response.to_Dict()
+        return response
 
 api.add_resource(PresetEndpoints, '/id/<int:presetId>')
 api.add_resource(PresetListEndpoints, '/')
