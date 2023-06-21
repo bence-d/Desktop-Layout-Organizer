@@ -54,9 +54,21 @@ class PresetListEndpoints(Resource):
         data = request.get_json()
         response = pmgr.create_preset(data['name'], data['description'])
         return response
+    
+class PresetActionEndpoints(Resource):
+    def get(self, presetId):
+        presetList = pmgr.get_all_entries()
+
+        for actPres in presetList:
+            if str(actPres.id) == (str(presetId)):
+                pmgr.load_preset(actPres.name)
+                return "Preset '" + actPres.name + "' loaded."
+            
+        return "ERROR: No preset with id '" + str(presetId) + "'."
 
 api.add_resource(PresetEndpoints, '/id/<int:presetId>')
 api.add_resource(PresetListEndpoints, '/')
+api.add_resource(PresetActionEndpoints, '/load/<int:presetId>')
 
 if __name__ == '__main__':
     app.run(debug=True)

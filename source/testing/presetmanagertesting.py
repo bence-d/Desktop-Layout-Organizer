@@ -32,6 +32,9 @@ result = pmgr.create_preset(presName, description)
 print(result)
 print("[Test 1] > Executed command. Check your files!")
 
+pmgr.change_preset(result[0]['id'], result[0]['name'], result[0]['description'], result[1])
+
+
 # # Test 2:
 
 # print("[Test 2] > Saving preset ")
