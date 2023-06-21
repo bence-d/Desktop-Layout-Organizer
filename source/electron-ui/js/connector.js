@@ -123,6 +123,7 @@ function addFilesToPreset(response) {
     updatePreset(response[0].id, response[0].name, response[0].description, filesAdded, null)
     $("#create-progressbar-progress").css("width",  ((filesAdded.length / filesToAdd.length) * 100) +  "%");
     $('#create-progressbar-progress').html(filesAdded.length + "/" + filesToAdd.length);
+    $('#create-pause-progress').removeAttr("disabled");
     addNextFileToPreset()
 }
 
