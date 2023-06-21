@@ -6,6 +6,7 @@ let filesToAdd = [];
 let filesAdded = [];
 let presetData = [];
 let lastFileAddedIdx = 0;
+pause = false;
 
 // +++ AJAX Requests +++
 
@@ -121,26 +122,39 @@ function addFilesToPreset(response) {
     filesAdded.push(response[1][lastFileAddedIdx])
     updatePreset(response[0].id, response[0].name, response[0].description, filesAdded, null)
     $("#create-progressbar-progress").css("width",  ((filesAdded.length / filesToAdd.length) * 100) +  "%");
+    $('#create-progressbar-progress').html(filesAdded.length + "/" + filesToAdd.length);
+    addNextFileToPreset()
 }
 
 // +++ Other functions +++
 
-function addNextFileToPreset() {
-    lastFileAddedIdx++
+async function addNextFileToPreset() {
 
-    if (lastFileAddedIdx < filesToAdd.length) {
-        console.log("adding file " + filesToAdd[lastFileAddedIdx] + " to preset")
-        filesAdded.push(filesToAdd[lastFileAddedIdx])
-        updatePreset(presetData.id, presetData.name, presetData.description, filesAdded, null)
-    } else {
-        console.log("finished adding files to preset")
-        console.log("files to add:")
-        console.log(filesToAdd)
-        console.log("files added:")
-        console.log(filesAdded)
-    }
-    
-    $("#create-progressbar-progress").css("width",  ((filesAdded.length / filesToAdd.length) * 100) +  "%");
+    do
+    {
+        lastFileAddedIdx++
+
+        if (lastFileAddedIdx < filesToAdd.length) {
+            console.log("adding file " + filesToAdd[lastFileAddedIdx] + " to preset")
+            filesAdded.push(filesToAdd[lastFileAddedIdx])
+            updatePreset(presetData.id, presetData.name, presetData.description, filesAdded, null)
+        } else {
+            console.log("finished adding files to preset")
+            console.log("files to add:")
+            console.log(filesToAdd)
+            console.log("files added:")
+            console.log(filesAdded)
+        }
+        
+        $("#create-progressbar-progress").css("width",  ((filesAdded.length / filesToAdd.length) * 100) +  "%");
+        $('#create-progressbar-progress').html(filesAdded.length + "/" + filesToAdd.length);
+
+        if (pause) {
+            break;
+        }
+
+        await sleep(1000);
+    } while (lastFileAddedIdx+1 < filesToAdd.length);
 }
 
 var disableDeleteButton = true;
@@ -262,4 +276,15 @@ function sortTable(columnIndex) {
             switching = true;
         }
     }
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function togglePause() {
+    pause = !pause;
+    addNextFileToPreset();
+
+    $('#create-pause-progress').html(pause ? "Resume" : "Pause");
 }
