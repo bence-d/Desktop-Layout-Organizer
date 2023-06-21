@@ -84,7 +84,8 @@ class PresetManager:
             outfile.write(presetsJSON)
 
         # Returning the paths of the files that are on the desktop, so the frontend can create shortcuts for them one by one
-        return [presetId, file_paths]
+        return [presetToAdd.to_Dict(), file_paths]
+        #return "response from the presetmanager "
 
     @staticmethod
     def change_preset(presetID:int, presetNewName:str, presetNewDesc:str, presetNewFiles:list):
@@ -94,7 +95,13 @@ class PresetManager:
         presetNewName: New name of the preset\n
         presetNewDesc: New description of the preset
         '''
+
+        pythoncom.CoInitialize()
         PresetManager.create_directories()
+
+        # Developer mode
+        if (DEVELOPER_MODE):
+            DESKTOP_PATH = os.path.join(os.path.expanduser('~'), 'Desktop\\DLODEV')
 
         # Change to the registry directory
         os.chdir(PRESETS_DIRECTORY)
@@ -118,6 +125,35 @@ class PresetManager:
 
                     with open(f"{PRESET_LIST_FILE_NAME}", "w") as outfile:
                         outfile.write(presetsJSON)
+
+                    #Adding files to the preset
+                    files = [] 
+                    for filepath in presetNewFiles:
+                        #copy files to repository and then delete them from desktop
+
+                        print("for filepath: ")
+                        print (filepath)
+                        #print("os path splitext: ")
+                        #print (os.path.splitext(filepath)[1])
+                        # print the extension of the file save in filepath
+
+                        if os.path.splitext(filepath)[1] == ".lnk":
+                            target_path = ShortcutUtil.return_shortcut_target(filepath)
+                            # adding file to the presetlist...
+                            files.append({"path": target_path, "name": os.path.basename(target_path)})
+                        else: 
+                            # copying file into repostiory
+
+                            # check filepath['path'] exists
+                            if os.path.exists(filepath):
+                                newFilePath = shutil.copy(filepath,os.path.join(REPOSITORY_DIRECTORY))
+
+                                # deleting file from desktop
+                                os.remove(filepath)
+                                # creating shortcut on desktop
+                                ShortcutUtil.create_shortcut(newFilePath, DESKTOP_PATH)
+                                # adding file to the presetlist
+                                files.append({"path": filepath, "name": os.path.basename(filepath)})
 
                     return preset
                 
@@ -278,7 +314,7 @@ class PresetManager:
 
         for preset in jsonlist['presets']:
             presets.append(Preset.to_Preset(preset))
-        
+
         return presets
 
     @staticmethod
