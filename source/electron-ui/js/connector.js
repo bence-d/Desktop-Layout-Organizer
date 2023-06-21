@@ -151,8 +151,10 @@ async function addNextFileToPreset() {
         await sleep(500);
     } while (lastFileAddedIdx+1 < filesToAdd.length);
 
-    await sleep(1500);
-    window.location.href = 'create.html';
+    if (!pause) {
+        await sleep(1500);
+        window.location.href = 'create.html';
+    }
 }
 
 var disableDeleteButton = true;
