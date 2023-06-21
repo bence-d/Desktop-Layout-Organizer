@@ -139,12 +139,6 @@ async function addNextFileToPreset() {
             console.log("adding file " + filesToAdd[lastFileAddedIdx] + " to preset")
             filesAdded.push(filesToAdd[lastFileAddedIdx])
             updatePreset(presetData.id, presetData.name, presetData.description, filesAdded, null)
-        } else {
-            console.log("finished adding files to preset")
-            console.log("files to add:")
-            console.log(filesToAdd)
-            console.log("files added:")
-            console.log(filesAdded)
         }
         
         $("#create-progressbar-progress").css("width",  ((filesAdded.length / filesToAdd.length) * 100) +  "%");
@@ -154,8 +148,11 @@ async function addNextFileToPreset() {
             break;
         }
 
-        await sleep(1000);
+        await sleep(500);
     } while (lastFileAddedIdx+1 < filesToAdd.length);
+
+    await sleep(1500);
+    window.location.href = 'create.html';
 }
 
 var disableDeleteButton = true;
