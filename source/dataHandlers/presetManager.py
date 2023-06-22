@@ -23,7 +23,7 @@ class PresetManager:
     REPOSITORY_DIRECTORY = PRESETS_DIRECTORY + "\\Repository"
     PRESET_LIST_FILE_NAME = PRESETS_DIRECTORY + "\\PresetList.json"
     DESKTOP_PATH = os.path.join(os.path.expanduser('~'), 'Desktop')
-    DEVELOPER_MODE = True
+    DEVELOPER_MODE = False
 
 
     @staticmethod
@@ -32,6 +32,8 @@ class PresetManager:
         # Developer mode
         if (DEVELOPER_MODE):
             DESKTOP_PATH = os.path.join(os.path.expanduser('~'), 'Desktop\\DLODEV')
+        else:
+            DESKTOP_PATH = os.path.join(os.path.expanduser('~'), 'Desktop')
 
         '''
         Creates a new preset with given presetName and Description\n
@@ -96,13 +98,22 @@ class PresetManager:
         presetNewDesc: New description of the preset
         '''
 
+        print("recieved files:")
+        print(presetNewFiles)
+        print("preset data:")
+        print(presetID)
+        print(presetNewName)
+        print(presetNewDesc)
+
         pythoncom.CoInitialize()
         PresetManager.create_directories()
 
         # Developer mode
         if (DEVELOPER_MODE):
             DESKTOP_PATH = os.path.join(os.path.expanduser('~'), 'Desktop\\DLODEV')
-
+        else:
+            DESKTOP_PATH = os.path.join(os.path.expanduser('~'), 'Desktop')
+            
         # Change to the registry directory
         os.chdir(PRESETS_DIRECTORY)
 
@@ -110,29 +121,24 @@ class PresetManager:
             presetList = json.load(fp)
 
             for preset in presetList['presets']:
-                print("comparing " + str(preset['id']) + "[type " + str(type(preset['id'])) + "]" + " with " + str(presetID) + "[type " + str(type(presetID)) + "]")
+                #print("comparing " + str(preset['id']) + "[type " + str(type(preset['id'])) + "]" + " with " + str(presetID) + "[type " + str(type(presetID)) + "]")
                 if preset['id'] == str(presetID):
+                    # print("found preset in presetlist")
 
                     preset['name'] = presetNewName
                     preset['description'] = presetNewDesc
-                    preset['files'] = presetNewFiles
 
                     presetsRaw = []
                     for actPresetToAddToList in presetList['presets']:
                         presetsRaw.append(Preset.to_Preset(actPresetToAddToList))
-
-                    presetsJSON = PresetManager.get_presets_in_json_format(presetsRaw)
-
-                    with open(f"{PRESET_LIST_FILE_NAME}", "w") as outfile:
-                        outfile.write(presetsJSON)
 
                     #Adding files to the preset
                     files = [] 
                     for filepath in presetNewFiles:
                         #copy files to repository and then delete them from desktop
 
-                        print("for filepath: ")
-                        print (filepath)
+                        #print("for filepath: ")
+                        # print (filepath)
                         #print("os path splitext: ")
                         #print (os.path.splitext(filepath)[1])
                         # print the extension of the file save in filepath
@@ -140,7 +146,7 @@ class PresetManager:
                         if os.path.splitext(filepath)[1] == ".lnk":
                             target_path = ShortcutUtil.return_shortcut_target(filepath)
                             # adding file to the presetlist...
-                            files.append({"path": target_path, "name": os.path.basename(target_path)})
+                            files.append({"path": target_path, "name": os.path.basename(filepath)})
                         else: 
                             # copying file into repostiory
 
@@ -153,10 +159,26 @@ class PresetManager:
                                 # creating shortcut on desktop
                                 ShortcutUtil.create_shortcut(newFilePath, DESKTOP_PATH)
                                 # adding file to the presetlist
-                                files.append({"path": filepath, "name": os.path.basename(filepath)})
+                                files.append({"path": newFilePath, "name": os.path.basename(newFilePath)})
 
+                    preset['files'] = files
+
+                    # search for preset.id in presetsRaw
+                    for actPreset in presetsRaw:
+                        if actPreset.id == str(presetID):
+                            #print("found preset in presetsraw")
+                            actPreset.name = presetNewName
+                            actPreset.description = presetNewDesc
+                            actPreset.files = files
+                            #print("newfiles: ")
+                            print(actPreset.files)
+
+                    presetsJSON = PresetManager.get_presets_in_json_format(presetsRaw)
+                    with open(f"{PRESET_LIST_FILE_NAME}", "w") as outfile:
+                        outfile.write(presetsJSON)
                     return preset
                 
+        print("preset not found in presetlist")
         return "ERROR: No preset found with id'" + str(presetID) + "'"
 
     @staticmethod
@@ -166,8 +188,12 @@ class PresetManager:
         presetName: Name of the preset
         '''
         PresetManager.create_directories()
+
+        if (os.path.exists(os.path.join(PRESETS_DIRECTORY, presetName + ".reg"))):
+            # Delete the existing preset file
+            os.remove(os.path.join(PRESETS_DIRECTORY, presetName + ".reg"))
         # Delete the existing preset file
-        os.remove(os.path.join(PRESETS_DIRECTORY, presetName + ".reg"))
+        #os.remove(os.path.join(PRESETS_DIRECTORY, presetName + ".reg"))
         # Export the registry key to the registry directory
         subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(PRESETS_DIRECTORY, presetName)}.reg", shell=True)
 
@@ -177,6 +203,7 @@ class PresetManager:
         Loads a preset onto the Desktop\n
         presetName: Name of the preset
         '''
+        pythoncom.CoInitialize()
         PresetManager.create_directories()
         presetFileName = os.path.join(PRESETS_DIRECTORY, presetName + ".reg")
 
@@ -198,10 +225,19 @@ class PresetManager:
                     PresetManager.save_preset_in_config(presetName)
 
                     for file in preset['files']:
-                        if os.path.splitext(file['path'])[1] == ".lnk":
-                            ShortcutUtil.create_shortcut(file['path'], DESKTOP_PATH)
-                        else:
-                            shutil.copy(file['path'], DESKTOP_PATH)
+                        ShortcutUtil.create_shortcut(file['path'], DESKTOP_PATH)
+
+                        # rename created shortcut to the original name
+                        shortcutFileRawName = os.path.splitext(os.path.basename(file['path']))[0]
+                        shortcutPathRaw = DESKTOP_PATH + "\\" + shortcutFileRawName + ".lnk"
+                        os.rename(shortcutPathRaw, DESKTOP_PATH + "\\" + file['name'])
+
+                        # get the filename of file['path'] path and save it into a variable
+
+                        # if os.path.splitext(file['name'])[1] == ".lnk":
+                        #     ShortcutUtil.create_shortcut(file, DESKTOP_PATH)
+                        # else:
+                        #     shutil.copy(file['path'], DESKTOP_PATH)
 
         # Exetuing registry file
         subprocess.call(['reg', 'import', presetFileName])

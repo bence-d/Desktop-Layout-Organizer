@@ -57,6 +57,21 @@ function updatePreset(presetId, presetName, presetDescription, presetFiles, call
     });
 }
 
+function loadPreset(presetId) {
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:5000/load/" + presetId,
+        success: (response) => {console.log(response)}
+    });
+  }
+
+function savePreset(presetId) {
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:5000/save/" + presetId,
+        success: (response) => {console.log(response)}
+    });
+}
 // +++ Callback functions for the AJAX Requests +++
 
 function fillListWithPresets(response) {
@@ -77,7 +92,8 @@ function fillListWithPresets(response) {
 
     // actions
     let td_actions = '<td>'
-        td_actions += '<a class="btn btn-sm btn-primary mx-1" href=""><i class="fa fa-check me-2 mx-2"></i></a>';
+        td_actions += '<a class="btn btn-sm btn-primary mx-1" onclick="loadPreset(' + response[i].id + ')"><i class="fa fa-check me-2 mx-2"></i></a>';
+        td_actions += '<a class="btn btn-sm btn-primary mx-1" onclick="savePreset(' + response[i].id + ')"><i class="fa fa-save me-2 mx-2"></i></a>';
         td_actions += '<a class="btn btn-sm btn-primary mx-1" href=""><i class="fa fa-pen me-2 mx-2"></i></a>';
         td_actions += '</td>';
     let tableRowEnd = "</tr>";
@@ -139,6 +155,8 @@ async function addNextFileToPreset() {
             console.log("adding file " + filesToAdd[lastFileAddedIdx] + " to preset")
             filesAdded.push(filesToAdd[lastFileAddedIdx])
             updatePreset(presetData.id, presetData.name, presetData.description, filesAdded, null)
+            console.log("filesadded: " )
+            console.log(filesAdded)
         }
         
         $("#create-progressbar-progress").css("width",  ((filesAdded.length / filesToAdd.length) * 100) +  "%");

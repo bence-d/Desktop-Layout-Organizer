@@ -25,6 +25,8 @@ function updatePreset(presetId) {
 // +++ Other functions +++
 
 function fillPresetEditorDropdown(response) {
+  console.log("response: ")
+  console.log(response)
     presets = response;
 
     // get the element with the id 'presetHolderTableBody' via jQuery and delete all its child elements
@@ -55,11 +57,17 @@ function fillPresetEditorForm(presetId) {
       // get the element with the id 'fileHolderTableBody' via jQuery and delete all its child elements
       $('#fileHolderTableBody').empty();
 
+      console.log("files: ")
+      console.log(presets[i].files)
+
       // add a row to each file in the table 'fileHolderTableBody' that's found in the preset with the id 'presetId'
       for (var j = 0; j < presets[i].files.length; j++) {
+        // save the filename from the path of presets[i].files[j] into a variable
+        var fileName = presets[i].files[j].split('\\').pop().split('/').pop();
+
         var checkBoxTD = '<td><input class="form-check-input" type="checkbox" checked></td>';
-        var fileNameTD = '<td>' + presets[i].files[j].name + '</td>';
-        var filePathTD = '<td class="filePathTD">' + presets[i].files[j].path + '</td>';
+        var fileNameTD = '<td>' + fileName + '</td>';
+        var filePathTD = '<td class="filePathTD">' + presets[i].files[j] + '</td>';
 
         var fileRow = '<tr>' + checkBoxTD + fileNameTD + filePathTD + '</tr>';
 
@@ -152,7 +160,10 @@ function reloadPresetListAfterChange() {
                   }
                 }
 
-            updatePreset($('#preset-editor-dropdown').val());
+
+            var indexOfPreset = presets.findIndex(preset => preset.id == $('#preset-editor-dropdown').val());
+
+            updatePreset(indexOfPreset);
           }
   
           form.classList.add('was-validated')
