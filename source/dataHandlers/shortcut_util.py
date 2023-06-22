@@ -28,8 +28,8 @@ class ShortcutUtil:
         ps1FilePath: Path to the PowerShell Script that creates the shortcuts
         sourceFile: File to make a shortcut for
         """
-        print ("original source file: ")
-        print (sourceFile)
+        #print ("original source file: ")
+        # print (sourceFile)
         sourceFile = sp.process(sourceFile)
 
         # getting the powershell script path relative to the current file
@@ -51,15 +51,15 @@ class ShortcutUtil:
         # creating the command to execute
         p = subprocess.run([powerShellExePath,ps1FilePath,targetFile,sourceFile],stdout=sys.stdout)
 
-        if p.returncode == 0:
-            print("-> Succesfully created shortcut for '" + sourceFile +"'")
-            print("-> Destination: " + targetFile)
-        else:
-            # print each variable of the subprocess.run([powerShellExePath,ps1FilePath,targetFile,sourceFile],stdout=sys.stdout) function
-            print("-> PowerShell Path: " + powerShellExePath)
-            print("-> PowerShell Script Path: " + ps1FilePath)
-            print("-> Target File: " + targetFile)
-            print("-> Source File: " + sourceFile)
-            print("-> An error as has occured creating the Shortcut")
-            exit()
+        # if p.returncode == 0:
+        #     print("-> Succesfully created shortcut for '" + sourceFile +"'")
+        #     print("-> Destination: " + targetFile)
+        # else:
+        #     # print each variable of the subprocess.run([powerShellExePath,ps1FilePath,targetFile,sourceFile],stdout=sys.stdout) function
+        #     print("-> PowerShell Path: " + powerShellExePath)
+        #     print("-> PowerShell Script Path: " + ps1FilePath)
+        #     print("-> Target File: " + targetFile)
+        #     print("-> Source File: " + sourceFile)
+        #     print("-> An error as has occured creating the Shortcut")
+        #     exit()
 
