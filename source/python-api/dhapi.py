@@ -55,7 +55,7 @@ class PresetListEndpoints(Resource):
         response = pmgr.create_preset(data['name'], data['description'])
         return response
     
-class PresetActionEndpoints(Resource):
+class PresetLoadEndpoint(Resource):
     def get(self, presetId):
         presetList = pmgr.get_all_entries()
 
@@ -65,10 +65,22 @@ class PresetActionEndpoints(Resource):
                 return "Preset '" + actPres.name + "' loaded."
             
         return "ERROR: No preset with id '" + str(presetId) + "'."
+    
+class PresetSaveEndpoint(Resource):
+    def get(self, presetId):
+        presetList = pmgr.get_all_entries()
+
+        for actPres in presetList:
+            if str(actPres.id) == (str(presetId)):
+                pmgr.save_preset(actPres.name)
+                return "Preset '" + actPres.name + "' loaded."
+            
+        return "ERROR: No preset with id '" + str(presetId) + "'."
 
 api.add_resource(PresetEndpoints, '/id/<int:presetId>')
 api.add_resource(PresetListEndpoints, '/')
-api.add_resource(PresetActionEndpoints, '/load/<int:presetId>')
+api.add_resource(PresetLoadEndpoint, '/load/<int:presetId>')
+api.add_resource(PresetSaveEndpoint, '/save/<int:presetId>')
 
 if __name__ == '__main__':
     app.run(debug=True)

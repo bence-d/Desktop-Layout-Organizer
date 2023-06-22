@@ -25,14 +25,16 @@ from dataHandlers.presetManager import PresetManager as pmgr
 
 # Test 1:
 
-print("[Test 1] > Creating a preset with name")
-presName = input("[Test 1] Name of new preset: ")
-description = "sample description"
-result = pmgr.create_preset(presName, description)
-print(result)
-print("[Test 1] > Executed command. Check your files!")
+pmgr.load_preset("imp3")
 
-pmgr.change_preset(result[0]['id'], result[0]['name'], result[0]['description'], result[1])
+# print("[Test 1] > Creating a preset with name")
+# presName = input("[Test 1] Name of new preset: ")
+# description = "sample description"
+# result = pmgr.create_preset(presName, description)
+# print(result)
+# print("[Test 1] > Executed command. Check your files!")
+
+#pmgr.change_preset(result[0]['id'], result[0]['name'], result[0]['description'], result[1])
 
 
 # # Test 2:

@@ -146,7 +146,7 @@ class PresetManager:
                         if os.path.splitext(filepath)[1] == ".lnk":
                             target_path = ShortcutUtil.return_shortcut_target(filepath)
                             # adding file to the presetlist...
-                            files.append({"path": target_path, "name": os.path.basename(target_path)})
+                            files.append({"path": target_path, "name": os.path.basename(filepath)})
                         else: 
                             # copying file into repostiory
 
@@ -159,7 +159,7 @@ class PresetManager:
                                 # creating shortcut on desktop
                                 ShortcutUtil.create_shortcut(newFilePath, DESKTOP_PATH)
                                 # adding file to the presetlist
-                                files.append({"path": filepath, "name": os.path.basename(filepath)})
+                                files.append({"path": newFilePath, "name": os.path.basename(newFilePath)})
 
                     preset['files'] = files
 
@@ -188,8 +188,12 @@ class PresetManager:
         presetName: Name of the preset
         '''
         PresetManager.create_directories()
+
+        if (os.path.exists(os.path.join(PRESETS_DIRECTORY, presetName + ".reg"))):
+            # Delete the existing preset file
+            os.remove(os.path.join(PRESETS_DIRECTORY, presetName + ".reg"))
         # Delete the existing preset file
-        os.remove(os.path.join(PRESETS_DIRECTORY, presetName + ".reg"))
+        #os.remove(os.path.join(PRESETS_DIRECTORY, presetName + ".reg"))
         # Export the registry key to the registry directory
         subprocess.call(f"reg export HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\Shell\\Bags\\1\\Desktop {os.path.join(PRESETS_DIRECTORY, presetName)}.reg", shell=True)
 
@@ -221,10 +225,19 @@ class PresetManager:
                     PresetManager.save_preset_in_config(presetName)
 
                     for file in preset['files']:
-                        if os.path.splitext(file['name'])[1] == ".lnk":
-                            ShortcutUtil.create_shortcut(file, DESKTOP_PATH)
-                        else:
-                            shutil.copy(file['path'], DESKTOP_PATH)
+                        ShortcutUtil.create_shortcut(file['path'], DESKTOP_PATH)
+
+                        # rename created shortcut to the original name
+                        shortcutFileRawName = os.path.splitext(os.path.basename(file['path']))[0]
+                        shortcutPathRaw = DESKTOP_PATH + "\\" + shortcutFileRawName + ".lnk"
+                        os.rename(shortcutPathRaw, DESKTOP_PATH + "\\" + file['name'])
+
+                        # get the filename of file['path'] path and save it into a variable
+
+                        # if os.path.splitext(file['name'])[1] == ".lnk":
+                        #     ShortcutUtil.create_shortcut(file, DESKTOP_PATH)
+                        # else:
+                        #     shutil.copy(file['path'], DESKTOP_PATH)
 
         # Exetuing registry file
         subprocess.call(['reg', 'import', presetFileName])
