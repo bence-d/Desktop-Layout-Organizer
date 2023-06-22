@@ -23,23 +23,26 @@ class PresetManager:
     REPOSITORY_DIRECTORY = PRESETS_DIRECTORY + "\\Repository"
     PRESET_LIST_FILE_NAME = PRESETS_DIRECTORY + "\\PresetList.json"
     DESKTOP_PATH = os.path.join(os.path.expanduser('~'), 'Desktop')
-    DEVELOPER_MODE = False
+    DEVELOPER_MODE = True
 
 
     @staticmethod
     def create_preset(presetName:str, presetDescription:str):
+        '''
+        Creates a new preset with given presetName and Description\n
+        presetName: Name of the preset\n
+        presetDescription: Description of the preset
+        return: An array containing the presets and the file paths.
+        errors:
+            -   ERROR: A preset with the given name already exists!
+        '''
+
         pythoncom.CoInitialize()
         # Developer mode
         if (DEVELOPER_MODE):
             DESKTOP_PATH = os.path.join(os.path.expanduser('~'), 'Desktop\\DLODEV')
         else:
             DESKTOP_PATH = os.path.join(os.path.expanduser('~'), 'Desktop')
-
-        '''
-        Creates a new preset with given presetName and Description\n
-        presetName: Name of the preset\n
-        presetDescription: Description of the preset
-        '''
 
         PresetManager.create_directories()
 
@@ -288,7 +291,8 @@ class PresetManager:
                     outfile.write(presetsJSON)
 
                 # Removing registry file
-                os.remove(preset['name'] + ".reg") 
+                if os.path.exists(preset['name'] + ".reg"):
+                    os.remove(preset['name'] + ".reg") 
                 return presetToDelete
         
         return "ERROR: No preset found with id'" + str(presetID) + "'"
@@ -514,3 +518,88 @@ class PresetManager:
         highest_id = int(highest_id) + 1
 
         return str(highest_id)
+    
+    @staticmethod
+    def add_file_to_preset(presetID: int, filePath: str, devmode: bool = False):
+        '''
+        Adds a file to a preset
+        presetID: ID of the preset\n
+        filePath: Path of the file to add
+        '''
+
+        # Make a new thread 
+        pythoncom.CoInitialize()
+
+        # Developer mode
+        if (DEVELOPER_MODE):
+            DESKTOP_PATH = os.path.join(os.path.expanduser('~'), 'Desktop\\DLODEV')
+        else:
+            DESKTOP_PATH = os.path.join(os.path.expanduser('~'), 'Desktop')
+
+        # Directory Check
+        PresetManager.create_directories()
+
+        # Change to the registry directory
+        os.chdir(PRESETS_DIRECTORY)
+
+        # Opening 
+        with open(PRESET_LIST_FILE_NAME) as fp:
+            
+            # Loading the JSON file
+            # Note: the preset's are still in a dictionary format
+            presetListJSON = json.load(fp)
+            presetListJSON = presetListJSON['presets']
+
+            presetList = []
+            for actPreset in presetListJSON:
+                presetList.append(Preset.to_Preset(actPreset))
+
+            # Searching for the preset
+            for actPreset in presetList:
+                
+                # Comparing the IDs
+                if actPreset.id == str(presetID):
+                    
+                    # If the new file is a .lnk file
+                    # Note: .lnk files won't be copied to the repository, but
+                    # the path they're pointing to will be saved
+                    
+                    if os.path.splitext(filePath)[1] == ".lnk":
+                        
+                        # Converting into a format that PowerShell can read
+                        target_path = ShortcutUtil.return_shortcut_target(filePath)
+                        
+                        # Adding file to the selected preset
+                        actPreset.files.append({"path": target_path, "name": os.path.basename(filePath)})
+                    else: 
+                        # Check if the file that is being added exists
+                        if os.path.exists(filePath):
+                            
+                            # Copying the file into the repository
+                            newFilePath = shutil.copy(filePath,os.path.join(REPOSITORY_DIRECTORY))
+
+                            # Deleting file from desktop
+                            os.remove(filePath)
+
+                            # Creating shortcut from the repository to the desktop
+                            ShortcutUtil.create_shortcut(newFilePath, DESKTOP_PATH)
+                            
+                            # Adding file to the selected preset
+                            actPreset.files.append({"path": newFilePath, "name": os.path.basename(newFilePath)})
+                        else:
+                            
+                            # If the file doesn't exist, return an error
+                            return "ERROR: File does not exist"
+
+                    # Save the changes to the JSON file
+
+                    presetsJSON = PresetManager.get_presets_in_json_format(presetList)
+
+                    with open(f"{PRESET_LIST_FILE_NAME}", "w") as outfile:
+                        outfile.write(presetsJSON)
+
+                    # Return the preset that was just updated 
+                    return actPreset
+                
+        # If the preset wasn't found, return an error
+        return "ERROR: No preset found with id'" + str(presetID) + "'"

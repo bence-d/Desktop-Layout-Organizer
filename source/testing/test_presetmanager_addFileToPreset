@@ -1,0 +1,129 @@
+import unittest
+
+# 1) Get relative path to this file
+import os
+import sys
+
+pathToDataHandlers = os.path.dirname(os.path.realpath(__file__))
+
+# 2) Go to the parent folder 
+pathToDataHandlers = os.path.abspath(os.path.join(pathToDataHandlers, os.pardir))
+
+# 3) Add the folder containing 'dataHandlers' to the system path
+sys.path.append(pathToDataHandlers)
+
+# 4) Import the dataHandlers
+from dataHandlers.presetManager import PresetManager as pmgr
+
+class TestSum(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        # Assume Developer mode is on
+
+        # Create DLODEV folder on desktop if it doesn't exist
+        if not os.path.exists(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop\DLODEV')):
+            os.makedirs(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop\DLODEV'))
+
+    def test_adding_single_file(self):
+
+        # Create test file 1 on desktop if it doesn't exist
+        if not os.path.exists(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop\\DLODEV\\test1.txt')):
+            f = open(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop\DLODEV\\test1.txt'), "w+")
+            f.write("This is a test file")
+            f.close()
+
+        # Create a preset
+        if pmgr.preset_exists("unittest001"):
+            presetlist = pmgr.get_all_entries()
+            for preset in presetlist:
+                if preset.name == "unittest001":
+                    pmgr.delete_preset(preset.id)
+
+        presetCreated = pmgr.create_preset("unittest001", "unittest001-description")[0]
+
+        # Get an absolute path to the desktop
+        newFilePath = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
+
+        # Add the 'DLODEV' folder to the desktop
+        newFilePath = os.path.join(newFilePath, 'DLODEV')
+
+        # Add the test.txt file to the desktop
+        newFilePath = os.path.join(newFilePath, 'test1.txt')
+
+
+        # Add the test1.txt file to the preset
+        presetModified = pmgr.add_file_to_preset(int(presetCreated['id']), newFilePath)
+        if type(presetModified) is str:
+            self.assertFalse(True, presetModified)
+
+        result = False
+
+        # Check if the file is in the preset
+        for actFile in presetModified.files:
+            if actFile['name'] == 'test1.txt':
+                result = True
+
+        self.assertEqual(result, True, "Couldn't add single file to preset")
+
+    def test_adding_multiple_files(self):
+
+        # Create test file 1 on desktop if it doesn't exist
+        if not os.path.exists(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop\\DLODEV\\test1.txt')):
+            f = open(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop\DLODEV\\test1.txt'), "w+")
+            f.write("This is a test file")
+            f.close()
+
+        # Create test file 2 on desktop if it doesn't exist
+        if not os.path.exists(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop\\DLODEV\\test2.txt')):
+            f = open(os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop\DLODEV\\test2.txt'), "w+")
+            f.write("This is a test file")
+            f.close()
+
+        # Create a preset
+        if pmgr.preset_exists("unittest001"):
+            presetlist = pmgr.get_all_entries()
+            for preset in presetlist:
+                if preset.name == "unittest001":
+                    pmgr.delete_preset(preset.id)
+
+        presetCreated = pmgr.create_preset("unittest001", "unittest001-description")[0]
+
+        # Get an absolute path to the desktop
+        newFilePath = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
+
+        # Add the 'DLODEV' folder to the desktop
+        newFilePath = os.path.join(newFilePath, 'DLODEV')
+
+        # Add the test1.txt file to the desktop
+        newFilePath1 = os.path.join(newFilePath, 'test1.txt')
+
+        # Add the test2.txt file to the desktop
+        newFilePath2 = os.path.join(newFilePath, 'test2.txt')
+
+        # Add the test1.txt file to the preset
+        presetModified = pmgr.add_file_to_preset(int(presetCreated['id']), newFilePath1)
+
+        # Add the test1.txt file to the preset
+        presetModified = pmgr.add_file_to_preset(int(presetCreated['id']), newFilePath2)
+
+        result = False
+
+        # Check if the file1 is in the preset
+        for actFile in presetModified.files:
+            if actFile['name'] == 'test1.txt':
+                result = True
+
+        self.assertEqual(result, True, "Couldn't add file1 to preset")
+
+        result = False
+
+        # Check if the file2 is in the preset
+        for actFile in presetModified.files:
+            if actFile['name'] == 'test2.txt':
+                result = True
+
+        self.assertEqual(result, True, "Couldn't add file2 to preset")
+
+if __name__ == '__main__':
+    unittest.main()
