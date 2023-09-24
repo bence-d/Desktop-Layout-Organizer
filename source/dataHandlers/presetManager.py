@@ -472,22 +472,6 @@ class PresetManager:
 
         print("The preset was successfully imported.")
         return True
-                
-        @staticmethod
-        def get_next_available_id():
-            '''
-            Returns the next available id
-            '''
-            highest_id = -1
-
-            presets = PresetManager.get_all_entries()
-            for preset in presets:
-                if int(preset.id) > int(highest_id):
-                    highest_id = preset.id
-            
-            highest_id = int(highest_id) + 1
-
-            return str(highest_id)
 
     @staticmethod
     def export_preset(source_file:str, destination_file:str, preset_name:str):
