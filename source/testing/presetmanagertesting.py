@@ -19,13 +19,21 @@ sys.path.append(pathToDataHandlers)
 # 4) Import the dataHandlers
 from dataHandlers.presetManager import PresetManager as pmgr
 
-#from source import presetManager as pmgr
+# from source import presetManager as pmgr
 
-# print("-> Started Tests...")
+print(" > Started Tests...")
+
+print("[Test 1] > Importing a preset")
+source_file = "C:\\Users\\bence\\Desktop\\presetToImport.json"
+destination_file = "C:\\Users\\bence\\AppData\\Local\\DLO\\Presets\\PresetList.json"
+preset_name = "test0012409"
+print("[Test 1] > ", source_file, destination_file, preset_name)
+pmgr.import_preset(source_file, destination_file, preset_name)
+print(" > importing done...")
 
 # Test 1:
 
-pmgr.load_preset("imp3")
+# pmgr.load_preset("imp3")
 
 # print("[Test 1] > Creating a preset with name")
 # presName = input("[Test 1] Name of new preset: ")
@@ -96,5 +104,3 @@ pmgr.load_preset("imp3")
 #    print("> [" + str(i) +"]: " + filepath)
 #    i = i + 1
 #    pmgr.copy_file_to_repository(filepath)
-
-confirm = input("Press a button to continue...")

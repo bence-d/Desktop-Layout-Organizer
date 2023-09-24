@@ -77,49 +77,30 @@
             </nav>
             <!-- Navbar End -->
 
-            <!-- Sale & Revenue Start -->
-            <div class="container-fluid pt-4 px-4">
-                <div class="row g-4">
-                    <div class="col-sm-6 col-xl-3">
-                        <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
-                            <i class="fa fa-chart-bar fa-3x text-primary"></i>
-                            <div class="ms-3">
-                                <p class="mb-2">Presets</p>
-                                <h6 class="mb-0">23</h6>
+            <!-- Form Start -->
+           <div class="container-fluid pt-4 px-4">
+            <div class="row g-4">
+                <div class="col-sm-12 col-xl-6">
+                    <div class="bg-secondary rounded h-100 p-4">
+                        <h6 class="mb-4">Import a Preset</h6>
+                        <form>
+                            <div class="mb-3">
+                                <label for="input_preset_name" class="form-label">Source File Path</label>
+                                <input type="text" class="form-control" id="input_source_preset">
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-xl-3">
-                        <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
-                            <i class="fa fa-file fa-3x text-primary"></i>
-                            <div class="ms-3">
-                                <p class="mb-2">Files</p>
-                                <h6 class="mb-0">1.259</h6>
+                            <div class="mb-3">
+                                <label for="input_preset_name" class="form-label">Preset Name</label>
+                                <input type="text" class="form-control" id="input_preset_name">
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-xl-3">
-                        <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
-                            <i class="fa fa-plus fa-3x text-primary"></i>
-                            <div class="ms-3">
-                                <p class="mb-2">Created</p>
-                                <h6 class="mb-0">15</h6>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-xl-3">
-                        <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
-                            <i class="fa fa-download fa-3x text-primary"></i>
-                            <div class="ms-3">
-                                <p class="mb-2">Downloaded</p>
-                                <h6 class="mb-0">8</h6>
-                            </div>
-                        </div>
+                        </form>
+                        <button type="submit" class="btn btn-primary" onclick="sendImportRequest()">Import</button>
                     </div>
                 </div>
             </div>
-            <!-- Sale & Revenue End -->
 
+        </div>
+        <!-- Form End -->
+            
             <!-- Footer Start -->
             <div class="pt-4 px-4" id="footer">
                 <div class="bg-secondary rounded-top p-4">
@@ -153,6 +134,9 @@
 
     <!-- Javascript -->
     <script src="js/main.js"></script>
+
+    <!-- Connector to the Python Backend -->
+    <script src="./js/connector.js"></script>
 </body>
 
 </html>

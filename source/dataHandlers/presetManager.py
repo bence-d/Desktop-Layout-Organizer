@@ -13,7 +13,7 @@ class PresetManager:
 
     global PRESETS_DIRECTORY 
     global REPOSITORY_DIRECTORY
-    global PRESET_LIST_FILE_NAME
+    global PRESET_LIST_FILE_NAME 
     global HOME_DIRECTORY
     global DESKTOP_PATH
     global DEVELOPER_MODE
@@ -463,6 +463,9 @@ class PresetManager:
             print("The specified preset was not found in the source file.")
             return False
 
+        # Swap the ID to an ID that is not already in use
+        found_preset['id'] = PresetManager.get_next_available_id()
+
         # Copy the preset object to the destination file
         destination_data['presets'].append(found_preset)
 
@@ -472,22 +475,6 @@ class PresetManager:
 
         print("The preset was successfully imported.")
         return True
-                
-        @staticmethod
-        def get_next_available_id():
-            '''
-            Returns the next available id
-            '''
-            highest_id = -1
-
-            presets = PresetManager.get_all_entries()
-            for preset in presets:
-                if int(preset.id) > int(highest_id):
-                    highest_id = preset.id
-            
-            highest_id = int(highest_id) + 1
-
-            return str(highest_id)
 
     @staticmethod
     def export_preset(source_file:str, destination_file:str, preset_name:str):

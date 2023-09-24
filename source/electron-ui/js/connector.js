@@ -72,6 +72,22 @@ function savePreset(presetId) {
         success: (response) => {console.log(response)}
     });
 }
+
+function importPreset(sourceParam, nameParam) {
+    $.ajax({
+        type: "POST",
+        url: "http://localhost:5000/import",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        data: JSON.stringify({
+            source: sourceParam,
+            name: nameParam
+        }),
+        success: (response) => {console.log("[connector.js] importPreset > response: " + response)}
+    });
+}
+
 // +++ Callback functions for the AJAX Requests +++
 
 function fillListWithPresets(response) {
@@ -294,6 +310,17 @@ function sortTable(columnIndex) {
             switching = true;
         }
     }
+}
+
+function sendImportRequest() {
+    // to be implemented
+
+    // Gather data from inputfields
+    preset_source_path = $('#input_source_preset').val();
+    preset_name = $('#input_preset_name').val();
+
+    // Call function
+    importPreset(preset_source_path, preset_name);
 }
 
 function sleep(ms) {
