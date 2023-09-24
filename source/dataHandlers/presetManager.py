@@ -477,17 +477,15 @@ class PresetManager:
         return True
 
     @staticmethod
-    def export_preset(source_file:str, destination_file:str, preset_name:str):
+    def export_preset(preset_name:str):
         '''
-        Exports a preset from a source file to a destination file\n
-        :param source_file: The source file to export the preset from\n
-        :param destination_file: The destination file to export the preset to\n
-        :param preset_name: The name of the preset to export\n
+        Exports a preset from the presetlist to the desktop\n
+        :param preset_id: The ID of the preset that's to be exported\n
         :return: True if the preset was exported successfully, False otherwise\n
         '''
 
         #import_preset and export_preset are the same function, the only difference is the order of the parameters
-        PresetManager.import_preset(destination_file,source_file,preset_name)
+        return PresetManager.import_preset(DESKTOP_PATH,PRESET_LIST_FILE_NAME,preset_name)
 
     @staticmethod
     def get_next_available_id():
