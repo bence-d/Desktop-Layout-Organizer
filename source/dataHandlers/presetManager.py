@@ -13,7 +13,7 @@ class PresetManager:
 
     global PRESETS_DIRECTORY 
     global REPOSITORY_DIRECTORY
-    global PRESET_LIST_FILE_NAME
+    global PRESET_LIST_FILE_NAME 
     global HOME_DIRECTORY
     global DESKTOP_PATH
     global DEVELOPER_MODE
@@ -462,6 +462,9 @@ class PresetManager:
         if found_preset is None:
             print("The specified preset was not found in the source file.")
             return False
+
+        # Swap the ID to an ID that is not already in use
+        found_preset['id'] = PresetManager.get_next_available_id()
 
         # Copy the preset object to the destination file
         destination_data['presets'].append(found_preset)

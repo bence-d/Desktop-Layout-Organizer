@@ -85,15 +85,19 @@
                         <h6 class="mb-4">Import a Preset</h6>
                         <form>
                             <div class="mb-3">
-                                <label for="input_preset_name" class="form-label">Filepath</label>
+                                <label for="input_preset_name" class="form-label">Source File Path</label>
+                                <input type="text" class="form-control" id="input_source_preset">
+                            </div>
+                            <div class="mb-3">
+                                <label for="input_preset_name" class="form-label">Preset Name</label>
                                 <input type="text" class="form-control" id="input_preset_name">
                             </div>
                         </form>
-                        <button type="submit" class="btn btn-primary" onclick="importPreset()">Import</button>
+                        <button type="submit" class="btn btn-primary" onclick="sendImportRequest()">Import</button>
                     </div>
                 </div>
             </div>
-            
+
         </div>
         <!-- Form End -->
             
@@ -130,6 +134,9 @@
 
     <!-- Javascript -->
     <script src="js/main.js"></script>
+
+    <!-- Connector to the Python Backend -->
+    <script src="./js/connector.js"></script>
 </body>
 
 </html>
