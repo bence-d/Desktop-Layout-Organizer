@@ -18,6 +18,7 @@ sys.path.append(pathToDataHandlers)
 
 # 4) Import the dataHandlers
 from dataHandlers.presetManager import PresetManager as pmgr
+from dataHandlers.presetManager import PRESET_LIST_FILE_NAME
 
 app = Flask(__name__)
 api = Api(app)
@@ -76,11 +77,21 @@ class PresetSaveEndpoint(Resource):
                 return "Preset '" + actPres.name + "' loaded."
             
         return "ERROR: No preset with id '" + str(presetId) + "'."
+    
+class PresetImportEndpoint(Resource):
+    def post(self):
+        data = request.get_json()
+        # TODO: Handle case when no parameter is getting passed
+        # TODO: Require non-empty stirng at Fronend, Backend and here (as the TODO above says)
+        # response = pmgr.import_preset(data['source'], data['destination'], data['name'])
+        response = pmgr.import_preset(data['source'], PRESET_LIST_FILE_NAME, data['name'])
+        return response
 
 api.add_resource(PresetEndpoints, '/id/<int:presetId>')
 api.add_resource(PresetListEndpoints, '/')
 api.add_resource(PresetLoadEndpoint, '/load/<int:presetId>')
 api.add_resource(PresetSaveEndpoint, '/save/<int:presetId>')
+api.add_resource(PresetImportEndpoint, '/import')
 
 if __name__ == '__main__':
     app.run(debug=True)
