@@ -484,8 +484,14 @@ class PresetManager:
         :return: True if the preset was exported successfully, False otherwise\n
         '''
 
-        #import_preset and export_preset are the same function, the only difference is the order of the parameters
-        return PresetManager.import_preset(DESKTOP_PATH,PRESET_LIST_FILE_NAME,preset_name)
+        destination_file = os.path.join(DESKTOP_PATH, (preset_name + ".json"))
+
+        # Open the file in write mode and create it if it doesn't exist
+        with open(os.path.join(DESKTOP_PATH, (preset_name + ".json")), "w") as file:
+            file.write('{"presets": []}')
+
+        # import_preset and export_preset are the same function, the only difference is the order of the parameters
+        return PresetManager.import_preset(PRESET_LIST_FILE_NAME, destination_file, preset_name)
 
     @staticmethod
     def get_next_available_id():
