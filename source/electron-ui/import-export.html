@@ -77,7 +77,7 @@
             </nav>
             <!-- Navbar End -->
 
-            <!-- Form Start -->
+            <!-- Import Form Start -->
            <div class="container-fluid pt-4 px-4">
             <div class="row g-4">
                 <div class="col-sm-12 col-xl-6">
@@ -94,6 +94,22 @@
                             </div>
                         </form>
                         <button type="submit" class="btn btn-primary" onclick="sendImportRequest()">Import</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Form Start -->
+            <div class="row g-4 my-1">
+                <div class="col-sm-12 col-xl-6">
+                    <div class="bg-secondary rounded h-100 p-4">
+                        <h6 class="mb-4">Export a Preset</h6>
+                        <form>
+                            <div class="mb-3">
+                                <label for="export_preset_name" class="form-label">Preset Name</label>
+                                <input type="text" class="form-control" id="export_preset_name">
+                            </div>
+                        </form>
+                        <button type="submit" class="btn btn-primary" onclick="sendExportRequest()">Export</button>
                     </div>
                 </div>
             </div>

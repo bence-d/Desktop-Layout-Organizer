@@ -88,6 +88,20 @@ function importPreset(sourceParam, nameParam) {
     });
 }
 
+function exportPreset(nameParam) {
+    $.ajax({
+        type: "POST",
+        url: "http://localhost:5000/export",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        data: JSON.stringify({
+            name: nameParam
+        }),
+        success: (response) => {console.log("[connector.js] exportPreset > response: " + response)}
+    });
+}
+
 // +++ Callback functions for the AJAX Requests +++
 
 function fillListWithPresets(response) {
@@ -313,8 +327,6 @@ function sortTable(columnIndex) {
 }
 
 function sendImportRequest() {
-    // to be implemented
-
     // Gather data from inputfields
     preset_source_path = $('#input_source_preset').val();
     preset_name = $('#input_preset_name').val();
@@ -322,6 +334,15 @@ function sendImportRequest() {
     // Call function
     importPreset(preset_source_path, preset_name);
 }
+
+function sendExportRequest() {
+    // Gather data from inputfields
+    preset_name = $('#export_preset_name').val();
+
+    // Call function
+    exportPreset(preset_name);
+}
+
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));

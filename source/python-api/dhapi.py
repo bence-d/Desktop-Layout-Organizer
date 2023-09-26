@@ -86,12 +86,21 @@ class PresetImportEndpoint(Resource):
         # response = pmgr.import_preset(data['source'], data['destination'], data['name'])
         response = pmgr.import_preset(data['source'], PRESET_LIST_FILE_NAME, data['name'])
         return response
+    
+class PresetExportEndpoint(Resource):
+    def post(self):
+        data = request.get_json()
+        # TODO: Handle case when no parameter is getting passed
+        # TODO: Require non-empty stirng at Fronend, Backend and here (as the TODO above says)
+        response = pmgr.export_preset(data['name'])
+        return response
 
 api.add_resource(PresetEndpoints, '/id/<int:presetId>')
 api.add_resource(PresetListEndpoints, '/')
 api.add_resource(PresetLoadEndpoint, '/load/<int:presetId>')
 api.add_resource(PresetSaveEndpoint, '/save/<int:presetId>')
 api.add_resource(PresetImportEndpoint, '/import')
+api.add_resource(PresetExportEndpoint, '/export')
 
 if __name__ == '__main__':
     app.run(debug=True)

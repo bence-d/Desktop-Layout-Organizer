@@ -23,13 +23,18 @@ from dataHandlers.presetManager import PresetManager as pmgr
 
 print(" > Started Tests...")
 
-print("[Test 1] > Importing a preset")
-source_file = "C:\\Users\\bence\\Desktop\\presetToImport.json"
-destination_file = "C:\\Users\\bence\\AppData\\Local\\DLO\\Presets\\PresetList.json"
-preset_name = "test0012409"
-print("[Test 1] > ", source_file, destination_file, preset_name)
-pmgr.import_preset(source_file, destination_file, preset_name)
-print(" > importing done...")
+# print("[Test 1] > Importing a preset")
+# source_file = "C:\\Users\\bence\\Desktop\\presetToImport.json"
+# destination_file = "C:\\Users\\bence\\AppData\\Local\\DLO\\Presets\\PresetList.json"
+# preset_name = "test0012409"
+# print("[Test 1] > ", source_file, destination_file, preset_name)
+# pmgr.import_preset(source_file, destination_file, preset_name)
+# print(" > importing done...")
+
+print("[Test 2] > Exporting a preset")
+preset_name = "gaming2"
+pmgr.export_preset(preset_name)
+print(" > exporting done...")
 
 # Test 1:
 
