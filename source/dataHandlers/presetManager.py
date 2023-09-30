@@ -75,7 +75,7 @@ class PresetManager:
             f"{presetId}",
             f"{presetName}",
             f"{presetDescription}",
-            f"C:\\Users\\Bence\\Desktop\\{presetName}.reg",
+            f"{REPOSITORY_DIRECTORY}\\{presetName}.reg",
             []) # files to be added under the control of the user later of via the interface -> that's why it returns file_paths
         presetsRaw.append(presetToAdd) 
 
