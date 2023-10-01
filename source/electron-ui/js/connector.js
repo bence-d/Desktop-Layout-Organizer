@@ -203,7 +203,7 @@ async function addNextFileToPreset() {
     if (!pause) {
         await sleep(1500);
         // TODO: uncomment the line below
-        //window.location.href = 'create.html';
+        window.location.href = 'create.html';
     }
 }
 
