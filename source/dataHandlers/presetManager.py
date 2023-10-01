@@ -227,7 +227,7 @@ class PresetManager:
                         # rename created shortcut to the original name
                         shortcutFileRawName = os.path.splitext(os.path.basename(file['path']))[0]
                         shortcutPathRaw = DESKTOP_PATH + "\\" + shortcutFileRawName + ".lnk"
-                        os.rename(shortcutPathRaw, DESKTOP_PATH + "\\" + file['name'])
+                        #os.rename(shortcutPathRaw, DESKTOP_PATH + "\\" + file['name'])
 
                         # get the filename of file['path'] path and save it into a variable
 
