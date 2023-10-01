@@ -158,7 +158,7 @@ class PresetManager:
                                 # adding file to the presetlist
                                 files.append({"path": newFilePath, "name": os.path.basename(newFilePath)})
 
-                    preset['files'] = files
+                    #preset['files'] = files
 
                     # search for preset.id in presetsRaw
                     for actPreset in presetsRaw:
@@ -166,7 +166,8 @@ class PresetManager:
                             #print("found preset in presetsraw")
                             actPreset.name = presetNewName
                             actPreset.description = presetNewDesc
-                            actPreset.files = files
+                            actPreset.files = preset['files'] + files
+                            print("[presetmanager] updated > actPreset.files: " + str(actPreset.files))
 
                     presetsJSON = PresetManager.get_presets_in_json_format(presetsRaw)
                     with open(f"{PRESET_LIST_FILE_NAME}", "w") as outfile:

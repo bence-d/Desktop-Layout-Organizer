@@ -156,20 +156,23 @@ function addFilesToPreset(response) {
         */
 
     // finally call
-    // getAllPresets()
+    //getAllPresets()
     console.log("addFilesToPreset() response: " )
     console.log(response)
 
     
-    lastFileAddedIdx = 0
     presetData = response[0]
     filesToAdd = response[1]
-    filesAdded.push(response[1][lastFileAddedIdx])
-    updatePreset(response[0].id, response[0].name, response[0].description, filesAdded, null)
-    console.log("[connector.js] addFilesToPreset() > added file: ", response[1][lastFileAddedIdx])
-    $("#create-progressbar-progress").css("width",  ((filesAdded.length / filesToAdd.length) * 100) +  "%");
-    $('#create-progressbar-progress').html(filesAdded.length + "/" + filesToAdd.length);
-    $('#create-pause-progress').removeAttr("disabled");
+    filesAdded = []
+
+    // filesAdded.push(response[1][lastFileAddedIdx])
+    // updatePreset(response[0].id, response[0].name, response[0].description, filesAdded, null)
+    // console.log("[connector.js] addFilesToPreset() > added file: ", response[1][lastFileAddedIdx])
+    // $("#create-progressbar-progress").css("width",  ((filesAdded.length / filesToAdd.length) * 100) +  "%");
+    // $('#create-progressbar-progress').html(filesAdded.length + "/" + filesToAdd.length);
+    // $('#create-pause-progress').removeAttr("disabled");
+    
+    lastFileAddedIdx = -1
     addNextFileToPreset()
 }
 
@@ -177,33 +180,56 @@ function addFilesToPreset(response) {
 
 async function addNextFileToPreset() {
 
-    do
-    {
-        lastFileAddedIdx++;
+    // do
+    // {
+    //     lastFileAddedIdx++;
 
-        if (lastFileAddedIdx < filesToAdd.length) {
-            console.log("adding file " + filesToAdd[lastFileAddedIdx] + " to preset")
-            filesAdded.push(filesToAdd[lastFileAddedIdx])
-            updatePreset(presetData.id, presetData.name, presetData.description, filesAdded, null)
-            console.log("filesadded: " )
-            console.log(filesAdded)
-        }
+    //     if (lastFileAddedIdx < filesToAdd.length) {
+    //         console.log("adding file " + filesToAdd[lastFileAddedIdx] + " to preset")
+    //         filesAdded.push(filesToAdd[lastFileAddedIdx])
+    //         updatePreset(presetData.id, presetData.name, presetData.description, filesAdded, null)
+    //         console.log("filesadded: " )
+    //         console.log(filesAdded)
+    //     }
 
         
+    //     $("#create-progressbar-progress").css("width",  ((filesAdded.length / filesToAdd.length) * 100) +  "%");
+    //     $('#create-progressbar-progress').html(filesAdded.length + "/" + filesToAdd.length);
+
+    //     if (pause) {
+    //         break;
+    //     }
+
+    //     await sleep(500);
+    // } while (lastFileAddedIdx+1 < filesToAdd.length);
+
+    // if (!pause) {
+    //     await sleep(1500);
+    //     // TODO: uncomment the line below
+    //     window.location.href = 'create.html';
+    // }
+
+    // ------------------------
+
+    if (pause) {
+        do {
+            await sleep(200);
+        } while (pause);
+    }
+
+    lastFileAddedIdx++;
+
+    if (lastFileAddedIdx < filesToAdd.length) {
+        console.log("adding file " + filesToAdd[lastFileAddedIdx] + " to preset")
+        filesAdded.push(filesToAdd[lastFileAddedIdx])
+        console.log("filesadded: " )
+        console.log(filesAdded)
         $("#create-progressbar-progress").css("width",  ((filesAdded.length / filesToAdd.length) * 100) +  "%");
         $('#create-progressbar-progress').html(filesAdded.length + "/" + filesToAdd.length);
-
-        if (pause) {
-            break;
-        }
-
-        await sleep(500);
-    } while (lastFileAddedIdx+1 < filesToAdd.length);
-
-    if (!pause) {
+        updatePreset(presetData.id, presetData.name, presetData.description, filesAdded, addNextFileToPreset)
+    } else {
         await sleep(1500);
-        // TODO: uncomment the line below
-        window.location.href = 'create.html';
+        //window.location.href = 'create.html';
     }
 }
 
