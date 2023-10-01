@@ -160,13 +160,13 @@ function addFilesToPreset(response) {
     console.log("addFilesToPreset() response: " )
     console.log(response)
 
-    console.log("starting to add files...")
     
     lastFileAddedIdx = 0
     presetData = response[0]
     filesToAdd = response[1]
     filesAdded.push(response[1][lastFileAddedIdx])
     updatePreset(response[0].id, response[0].name, response[0].description, filesAdded, null)
+    console.log("[connector.js] addFilesToPreset() > added file: ", response[1][lastFileAddedIdx])
     $("#create-progressbar-progress").css("width",  ((filesAdded.length / filesToAdd.length) * 100) +  "%");
     $('#create-progressbar-progress').html(filesAdded.length + "/" + filesToAdd.length);
     $('#create-pause-progress').removeAttr("disabled");
@@ -179,7 +179,7 @@ async function addNextFileToPreset() {
 
     do
     {
-        lastFileAddedIdx++
+        lastFileAddedIdx++;
 
         if (lastFileAddedIdx < filesToAdd.length) {
             console.log("adding file " + filesToAdd[lastFileAddedIdx] + " to preset")
@@ -188,6 +188,7 @@ async function addNextFileToPreset() {
             console.log("filesadded: " )
             console.log(filesAdded)
         }
+
         
         $("#create-progressbar-progress").css("width",  ((filesAdded.length / filesToAdd.length) * 100) +  "%");
         $('#create-progressbar-progress').html(filesAdded.length + "/" + filesToAdd.length);
@@ -201,7 +202,8 @@ async function addNextFileToPreset() {
 
     if (!pause) {
         await sleep(1500);
-        window.location.href = 'create.html';
+        // TODO: uncomment the line below
+        //window.location.href = 'create.html';
     }
 }
 

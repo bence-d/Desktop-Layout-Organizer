@@ -98,12 +98,7 @@ class PresetManager:
         presetNewDesc: New description of the preset
         '''
 
-        print("recieved files:")
-        print(presetNewFiles)
-        print("preset data:")
-        print(presetID)
-        print(presetNewName)
-        print(presetNewDesc)
+        print("[prese+tManager] change_preset > recieved arguments: " + str(presetID) + " " + str(presetNewName) + " " + str(presetNewDesc) + " " + str(presetNewFiles))
 
         pythoncom.CoInitialize()
         PresetManager.create_directories()
@@ -152,9 +147,11 @@ class PresetManager:
 
                             # check filepath['path'] exists
                             if os.path.exists(filepath):
+                                print("[presetManager] change_preset > copying file to repository: " + filepath)
                                 newFilePath = shutil.copy(filepath,os.path.join(REPOSITORY_DIRECTORY))
 
                                 # deleting file from desktop
+                                print("[presetManager] change_preset > deleting file from desktop: " + filepath)
                                 os.remove(filepath)
                                 # creating shortcut on desktop
                                 ShortcutUtil.create_shortcut(newFilePath, DESKTOP_PATH)
@@ -170,11 +167,10 @@ class PresetManager:
                             actPreset.name = presetNewName
                             actPreset.description = presetNewDesc
                             actPreset.files = files
-                            #print("newfiles: ")
-                            print(actPreset.files)
 
                     presetsJSON = PresetManager.get_presets_in_json_format(presetsRaw)
                     with open(f"{PRESET_LIST_FILE_NAME}", "w") as outfile:
+
                         outfile.write(presetsJSON)
                     return preset
                 
