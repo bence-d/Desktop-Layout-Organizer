@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: angular
-        image: angular-webserver # Image that will be used to containers in the cluster
+        image: kinryukai/kubernetes-deployment # Image that will be used to containers in the cluster
         ports:
         - containerPort: 80 # The port that the container is running on in the cluster
 ---
