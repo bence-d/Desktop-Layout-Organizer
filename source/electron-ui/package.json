@@ -4,11 +4,27 @@
   "description": "Hello World!",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dist:win": "electron-builder --win"
   },
   "author": "Bence",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^24.1.2"
+    "electron": "^24.1.2",
+    "electron-builder": "^24.6.4"
+  },
+  "build": {
+    "appId": "com.dloteam.dlo",
+    "productName": "Desktop Layout Organizer",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
   }
 }
