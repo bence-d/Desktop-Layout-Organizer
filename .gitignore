@@ -325,3 +325,5 @@ dist
 .svelte-kit
 
 # End of https://www.toptal.com/developers/gitignore/api/node
+source/electron-ui/package-lock.json
+.gitignore
