@@ -25,4 +25,4 @@ jobs:
         run: npm run build
 
       - name: Create EXE
-        run: npm run electron-builder:win
+        run: npm run electron-builder:win --config=./source/electron-ui/electron-builder.yml
