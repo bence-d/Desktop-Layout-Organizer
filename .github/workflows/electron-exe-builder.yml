@@ -18,11 +18,12 @@ jobs:
         with:
           node-version: 14
 
-      - name: Install Dependencies
-        run: npm install
+      #- name: Install Dependencies
+       # run: npm install
 
       - name: Build and Package
-        run: npm run build
+        run: npm run ./source/python-api/requirements.txt
+
 
       - name: Create EXE
-        run: npm run ./source/electron-ui/electron-builder.yml:win #--config=./source/electron-ui/electron-builder.yml
+        run: npm run electron-builder:win --config=./source/electron-ui/electron-builder.yml
