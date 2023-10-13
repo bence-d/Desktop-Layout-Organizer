@@ -3,7 +3,7 @@ name: Build and Package Electron App
 on:
   push:
     branches:
-      - private/GabrielPapic/buildingElectronExe
+      - main
 
 jobs:
   build:
