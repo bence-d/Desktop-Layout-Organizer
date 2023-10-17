@@ -25,5 +25,5 @@ jobs:
         run: npm run requirements.txt
 
 
-      - name: Create EXE
-        run: npm run electron-builder:win --config=./source/electron-ui/electron-builder.yml
+      #- name: Create EXE
+       # run: npm run electron-builder:win --config=./source/electron-ui/electron-builder.yml
