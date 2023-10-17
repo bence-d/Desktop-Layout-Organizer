@@ -18,12 +18,8 @@ jobs:
         with:
           node-version: 14
 
-      #- name: Install Dependencies
-       # run: npm install
-
       - name: Build and Package
         run: pip install -r requirements.txt
 
-
-      #- name: Create EXE
-       # run: npm run electron-builder:win --config=./source/electron-ui/electron-builder.yml
+      - name: Create EXE
+        run: npm run electron-builder:win --config=./source/electron-ui/electron-builder.yml
