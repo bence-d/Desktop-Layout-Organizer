@@ -25,7 +25,7 @@ jobs:
         run: npm run package-electron
 
       - name: Upload EXE
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: dist
-          path: dist
+          name: electron-ui
+          path: electron-ui
