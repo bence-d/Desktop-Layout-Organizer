@@ -22,7 +22,7 @@ jobs:
         run: pip install -r requirements-python.txt && npm install electron-builder --save-dev
 
       - name: Build Electron App and Create EXE
-        run: npm run build && npx electron-builder
+        run: npm run package-electron
 
       - name: Upload EXE
         uses: actions/upload-artifact@v2
