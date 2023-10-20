@@ -27,5 +27,5 @@ jobs:
       - name: Upload EXE
         uses: actions/upload-artifact@v3
         with:
-          name: electron-ui
-          path: electron-ui
+          name: electron
+          path: electron-ui/
