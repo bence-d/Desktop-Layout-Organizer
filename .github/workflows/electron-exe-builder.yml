@@ -19,7 +19,13 @@ jobs:
           node-version: 14
 
       - name: Install Dependencies
-        run: pip install -r requirements-python.txt && npm install -r requirements-electron.txt
+        run: pip install -r requirements-python.txt && npm install electron-builder --save-dev
 
-      - name: Create EXE
-        run: npm run npx electron-builder
+      - name: Build Electron App and Create EXE
+        run: npm run build && npx electron-builder
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: dist
