@@ -6,12 +6,12 @@
   "scripts": {
     "start": "electron .",
     "package-electron": "electron-packager source\\electron-ui\\ testpackage --platform=win32 --arch=x64"
-
   },
+  
   "author": "Bence",
   "license": "ISC",
   "devDependencies": {
     "electron": "^24.1.2",
-    "electron-packager": "^17.1.2"
+    "electron-packager": "^version"
   }
 }
