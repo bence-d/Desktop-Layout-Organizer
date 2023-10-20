@@ -11,7 +11,7 @@
   "author": "Bence",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^24.1.2",
+    "electron": "^version",
     "electron-packager": "^version"
   }
 }
