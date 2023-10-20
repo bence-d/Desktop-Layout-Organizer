@@ -19,7 +19,7 @@ jobs:
           node-version: 14
 
       - name: Install Dependencies
-        run: pip install -r requirements-python.txt && npm install electron-builder --save-dev
+        run: pip install -r requirements-python.txt && npm install electron-builder --save-dev && npm install electron
 
       - name: Build Electron App and Create EXE
         run: npm run package-electron
