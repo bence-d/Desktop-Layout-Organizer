@@ -18,8 +18,8 @@ jobs:
         with:
           node-version: 14
 
-      - name: Build and Package
-        run: pip install -r requirements.txt
+      - name: Install Dependencies
+        run: pip install -r requirements-python.txt && npm install -r requirements-electron.txt
 
       - name: Create EXE
         run: npm run npx electron-builder
