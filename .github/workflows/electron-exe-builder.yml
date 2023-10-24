@@ -3,7 +3,7 @@ name: Build and Package Electron App
 on:
   push:
     branches:
-      - private/GabrielPapic/ElectronExeBuilder
+      - main
 
 jobs:
   build:
@@ -27,5 +27,5 @@ jobs:
       - name: Upload EXE
         uses: actions/upload-artifact@v3
         with:
-          name: my-app  
-          path: testpackage-win32-x64 #my-app.exe 
+          name: Electron-Application  
+          path: Desktop-Layout-Organizer-win32-x64
