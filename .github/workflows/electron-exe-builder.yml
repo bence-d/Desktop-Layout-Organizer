@@ -1,0 +1,29 @@
+name: Build and Package Electron App
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
+      - name: Install Dependencies
+        run: pip install -r requirements.txt && npm install electron-builder --save-dev && npm install electron
+
+      - name: Build Electron App and Create EXE
+        run: npm run package-electron
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v3
+        with:
+          name: Electron-Application  
+          path: Desktop-Layout-Organizer-win32-x64

@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "package-electron": "npx electron-packager source\\electron-ui\\ Desktop-Layout-Organizer --platform=win32 --arch=x64"
+  },
+  "devDependencies": {
+    "electron": "^24.1.2",
+    "electron-packager": "^17.1.2"
+  }
+}
