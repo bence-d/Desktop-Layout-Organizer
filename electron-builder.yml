@@ -1,9 +1,0 @@
-# electron-builder.yml
-
-appId: com.example.myapp
-productName: Desktop Layout Organizer
-directories:
-  output: ./dist
-
-win:
-  target: nsis
