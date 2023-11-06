@@ -7,13 +7,13 @@ from preset import Preset
 currObj = ""
 
 presetsRaw =  [
-    Preset("Preset1", "Description of Preset1", "C:\\Users\\Bence\\Desktop\\preset1.reg",[]), 
-    Preset("Preset2", "Description of Preset2", "C:\\Users\\Bence\\Desktop\\preset2.reg",[]),
-    Preset("Preset3", "Description of Preset3", "C:\\Users\\Bence\\Desktop\\preset3.reg",[])
+    Preset(1,"Preset1", "Description of Preset1", "C:\\Users\\Bence\\Desktop\\preset1.reg",[]), 
+    Preset(2,"Preset2", "Description of Preset2", "C:\\Users\\Bence\\Desktop\\preset2.reg",[]),
+    Preset(3,"Preset3", "Description of Preset3", "C:\\Users\\Bence\\Desktop\\preset3.reg",[])
 ]
 
 # build a list of dicts from your objects:
-presets = [obj.to_dict() for obj in presetsRaw]
+presets = [obj.to_Dict() for obj in presetsRaw]
 
 presets.sort(key=lambda obj: obj["name"])
 
