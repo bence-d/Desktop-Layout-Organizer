@@ -1,0 +1,24 @@
+name: Build and Test Backend Functions
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+
+      - name: Execute PresetManager.create_directories for creating JSON File 
+        run: python -c "import presetManager; presetManager.PresetManager.create_directories()"
+
