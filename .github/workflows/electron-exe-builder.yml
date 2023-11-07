@@ -21,7 +21,7 @@ jobs:
 
       - name: Execute PresetManager.create_directories for creating JSON File 
         run: |
-          python -c "from source/dataHandlers import PresetManager; PresetManager.create_directories()"
+          python -c "from source\dataHandlers\presetManager.py import PresetManager; PresetManager.create_directories()"
 
       - name: Build Electron App and Create EXE
         run: npm run package-electron
