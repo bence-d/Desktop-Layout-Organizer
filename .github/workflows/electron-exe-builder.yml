@@ -20,8 +20,7 @@ jobs:
         run: pip install -r requirements.txt && npm install electron-builder --save-dev && npm install electron
 
       - name: Execute PresetManager.create_directories for creating JSON File 
-        run: |
-          python -c "from source\dataHandlers\presetManager.py import PresetManager; PresetManager.create_directories()"
+        run: python -c "from source\dataHandlers\presetManager.py import PresetManager; PresetManager.create_directories()"
 
       - name: Build Electron App and Create EXE
         run: npm run package-electron
