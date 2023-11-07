@@ -16,11 +16,12 @@ jobs:
         with:
           node-version: 14
 
+          
       - name: Install Dependencies
         run: pip install -r requirements.txt && npm install electron-builder --save-dev && npm install electron
 
       - name: Execute PresetManager.create_directories for creating JSON File 
-        run: python -c "presetManager.py import PresetManager; PresetManager.create_directories()"
+        run: python -c "import presetManager; presetManager.PresetManager.create_directories()"
 
       - name: Build Electron App and Create EXE
         run: npm run package-electron
