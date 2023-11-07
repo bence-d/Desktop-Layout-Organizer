@@ -20,6 +20,6 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Execute PresetManager.create_directories for creating JSON File 
-        run: print("Hello World")
+        run: print(os. getcwd())
             #python -c "import source\\dataHandlers\\presetManager.py; presetManager.PresetManager.create_directories()" 
 
