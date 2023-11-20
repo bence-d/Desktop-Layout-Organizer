@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-angular-webserver
+spec:
+  selector:
+    matchLabels:
+      app: angular
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: angular
+        label-key : label-value
+    spec:
+      containers:
+        - name: deployment-angular-webserver
+          image: kinryukai/angular-webserver:v2
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 80
