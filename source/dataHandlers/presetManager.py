@@ -112,33 +112,102 @@ class PresetManager:
         # Change to the registry directory
         os.chdir(PRESETS_DIRECTORY)
 
-        found=False
         with open(PRESET_LIST_FILE_NAME) as fp:
             presetList = json.load(fp)
 
-            # waiting to find out registrylocation
-            presetUpdated = Preset("", presetNewName, presetNewDesc, "", presetNewFiles)
-            presetToDelete = Preset("", "", "", "", [])
-
             for preset in presetList['presets']:
+                #print("comparing " + str(preset['id']) + "[type " + str(type(preset['id'])) + "]" + " with " + str(presetID) + "[type " + str(type(presetID)) + "]")
                 if preset['id'] == str(presetID):
-                    found = True
-                    presetToDelete = preset
-                    presetUpdated.registryLocation = preset['registryLocation']
-                    presetUpdated.id = preset['id']
-        
-        if not found:
-            print("preset not found in presetlist")
-            return "ERROR: No preset found with id'" + str(presetID) + "'"
-        else:
-            # # delete presetToDelete from presetList
-            presetList['presets'].remove(presetToDelete)
-            # # add presetUpdated to presetList
-            presetList['presets'].append(presetUpdated.to_Dict())
-            presetsJSON = json.dumps(presetList)
-            with open(f"{PRESET_LIST_FILE_NAME}", "w") as outfile:
-                outfile.write(presetsJSON)
-            return preset
+                    # print("found preset in presetlist")
+
+                    preset['name'] = presetNewName
+                    preset['description'] = presetNewDesc
+
+                    presetsRaw = []
+                    for actPresetToAddToList in presetList['presets']:
+                        presetsRaw.append(Preset.to_Preset(actPresetToAddToList))
+
+                    #Adding files to the preset
+                    files = [] 
+                    for filepath in presetNewFiles:
+                        #copy files to repository and then delete them from desktop
+
+                        if os.path.splitext(filepath)[1] == ".lnk":
+                            target_path = ShortcutUtil.return_shortcut_target(filepath)
+                            # adding file to the presetlist...
+                            files.append({"path": target_path, "name": os.path.basename(filepath)})
+                        else: 
+                            # copying file into repostiory
+
+                            # check filepath['path'] exists
+                            if os.path.exists(filepath):
+                                newFilePath = ""
+
+                                renameCounter = "0"
+                                couldCopy = False
+
+                                while couldCopy == False:
+                                    couldCopy = True
+                                    try:
+                                        # checking if file is a folder
+                                        if os.path.isdir(filepath):
+                                            # copying folder into repository
+
+                                            if renameCounter == "0":
+                                                newFilePath = shutil.copytree(filepath,os.path.join(REPOSITORY_DIRECTORY,os.path.basename(filepath)))
+                                            else:
+                                                newFilePath = shutil.copytree(filepath,os.path.join(REPOSITORY_DIRECTORY,os.path.basename(filepath) + " (" + renameCounter + ")"))
+                                            # deleting folder from desktop
+                                            shutil.rmtree(filepath)
+
+                                        else:
+                                            # copying file into repository
+                                            
+                                            if renameCounter == "0":
+                                                newFilePath = shutil.copy(filepath,os.path.join(REPOSITORY_DIRECTORY))
+                                            else:
+                                                newFilePath = shutil.copy(filepath,os.path.join(REPOSITORY_DIRECTORY,os.path.basename(filepath) + " (" + renameCounter + ")"))
+
+                                            # deleting file from desktop
+                                            os.remove(filepath)
+                                    except FileExistsError:
+                                        couldCopy = False
+                                        print("[presetManager] change_preset > file already exists in repository: " + filepath)
+                                        renameCounter = str(int(renameCounter) + 1)
+                                    except PermissionError as e:
+                                        couldCopy = True
+                                        if e.args[0] == 13:
+                                            # TODO: pass error to frontend
+                                            print("[presetManager] change_preset > Please close the following > " + filepath)
+                                        elif e.args[0] == 5:
+                                            # TODO: pass error to frontend
+                                            print("[presetManager] change_preset > Permission denied > " + filepath)
+
+
+                                # creating shortcut on desktop
+                                ShortcutUtil.create_shortcut(newFilePath, DESKTOP_PATH)
+                                # adding folder to the presetlist
+                                files.append({"path": newFilePath, "name": os.path.basename(newFilePath)})
+
+                    #preset['files'] = files
+
+                    # search for preset.id in presetsRaw
+                    for actPreset in presetsRaw:
+                        if actPreset.id == str(presetID):
+                            #print("found preset in presetsraw")
+                            actPreset.name = presetNewName
+                            actPreset.description = presetNewDesc
+                            actPreset.files = preset['files'] + files
+                            print("[presetmanager] updated > actPreset.files: " + str(actPreset.files))
+
+                    presetsJSON = PresetManager.get_presets_in_json_format(presetsRaw)
+                    with open(f"{PRESET_LIST_FILE_NAME}", "w") as outfile:
+
+                        outfile.write(presetsJSON)
+                    return preset
+                
+        print("preset not found in presetlist")
+        return "ERROR: No preset found with id'" + str(presetID) + "'"
 
     @staticmethod
     def save_preset(presetName:str):
