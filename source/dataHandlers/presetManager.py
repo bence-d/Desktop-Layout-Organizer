@@ -75,7 +75,7 @@ class PresetManager:
             f"{presetId}",
             f"{presetName}",
             f"{presetDescription}",
-            f"C:\\Users\\Bence\\Desktop\\{presetName}.reg",
+            f"{REPOSITORY_DIRECTORY}\\{presetName}.reg",
             []) # files to be added under the control of the user later of via the interface -> that's why it returns file_paths
         presetsRaw.append(presetToAdd) 
 
@@ -98,12 +98,7 @@ class PresetManager:
         presetNewDesc: New description of the preset
         '''
 
-        print("recieved files:")
-        print(presetNewFiles)
-        print("preset data:")
-        print(presetID)
-        print(presetNewName)
-        print(presetNewDesc)
+        print("[prese+tManager] change_preset > recieved arguments: " + str(presetID) + " " + str(presetNewName) + " " + str(presetNewDesc) + " " + str(presetNewFiles))
 
         pythoncom.CoInitialize()
         PresetManager.create_directories()
@@ -194,7 +189,7 @@ class PresetManager:
                         # rename created shortcut to the original name
                         shortcutFileRawName = os.path.splitext(os.path.basename(file['path']))[0]
                         shortcutPathRaw = DESKTOP_PATH + "\\" + shortcutFileRawName + ".lnk"
-                        os.rename(shortcutPathRaw, DESKTOP_PATH + "\\" + file['name'])
+                        #os.rename(shortcutPathRaw, DESKTOP_PATH + "\\" + file['name'])
 
                         # get the filename of file['path'] path and save it into a variable
 

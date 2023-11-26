@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
 from pythoncom import CoInitialize
+import pyuac
 
 # Adding DataHandlers to the system path so the python importer can find it
 
@@ -103,4 +104,8 @@ api.add_resource(PresetImportEndpoint, '/import')
 api.add_resource(PresetExportEndpoint, '/export')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    if not pyuac.isUserAdmin():
+        pyuac.runAsAdmin()
+    else:        
+        app.run(debug=True)
+    
