@@ -25,26 +25,26 @@ function updatePreset(presetId) {
 // +++ Other functions +++
 
 function fillPresetEditorDropdown(response) {
-  console.log("response: ")
+  console.log("[presetEditor.js] fillPresetEditorDropdown > response: ")
   console.log(response)
-    presets = response;
+  presets = response;
 
-    // get the element with the id 'presetHolderTableBody' via jQuery and delete all its child elements
-    
-    let presetEditorDropdown = $('#preset-editor-dropdown');
-    presetEditorDropdown.empty();
+  // get the element with the id 'presetHolderTableBody' via jQuery and delete all its child elements
+  
+  let presetEditorDropdown = $('#preset-editor-dropdown');
+  presetEditorDropdown.empty();
 
-    // for each preset in the response variable
-    for (var i = 0; i < response.length; i++) {
-        // building a table row
-        let option = '<option value="' + response[i].id + '">' + response[i].name + '</option>';
+  // for each preset in the response variable
+  for (var i = 0; i < response.length; i++) {
+      // building a table row
+      let option = '<option value="' + response[i].id + '">' + response[i].name + '</option>';
 
-        presetEditorDropdown.append(option);
-    }
+      presetEditorDropdown.append(option);
+  }
 
-    if (response) {
-      fillPresetEditorForm(response[0].id);
-    }
+  if (response) {
+    fillPresetEditorForm(response[0].id);
+  }
 }
 
 function fillPresetEditorForm(presetId) {
@@ -63,11 +63,11 @@ function fillPresetEditorForm(presetId) {
       // add a row to each file in the table 'fileHolderTableBody' that's found in the preset with the id 'presetId'
       for (var j = 0; j < presets[i].files.length; j++) {
         // save the filename from the path of presets[i].files[j] into a variable
-        var fileName = presets[i].files[j].split('\\').pop().split('/').pop();
+        var fileName = presets[i].files[j].name.split('\\').pop().split('/').pop();
 
         var checkBoxTD = '<td><input class="form-check-input" type="checkbox" checked></td>';
         var fileNameTD = '<td>' + fileName + '</td>';
-        var filePathTD = '<td class="filePathTD">' + presets[i].files[j] + '</td>';
+        var filePathTD = '<td class="filePathTD">' + presets[i].files[j].path + '</td>';
 
         var fileRow = '<tr>' + checkBoxTD + fileNameTD + filePathTD + '</tr>';
 
