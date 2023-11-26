@@ -132,12 +132,6 @@ class PresetManager:
                     for filepath in presetNewFiles:
                         #copy files to repository and then delete them from desktop
 
-                        #print("for filepath: ")
-                        # print (filepath)
-                        #print("os path splitext: ")
-                        #print (os.path.splitext(filepath)[1])
-                        # print the extension of the file save in filepath
-
                         if os.path.splitext(filepath)[1] == ".lnk":
                             target_path = ShortcutUtil.return_shortcut_target(filepath)
                             # adding file to the presetlist...
@@ -147,15 +141,52 @@ class PresetManager:
 
                             # check filepath['path'] exists
                             if os.path.exists(filepath):
-                                print("[presetManager] change_preset > copying file to repository: " + filepath)
-                                newFilePath = shutil.copy(filepath,os.path.join(REPOSITORY_DIRECTORY))
+                                newFilePath = ""
 
-                                # deleting file from desktop
-                                print("[presetManager] change_preset > deleting file from desktop: " + filepath)
-                                os.remove(filepath)
+                                renameCounter = "0"
+                                couldCopy = False
+
+                                while couldCopy == False:
+                                    couldCopy = True
+                                    try:
+                                        # checking if file is a folder
+                                        if os.path.isdir(filepath):
+                                            # copying folder into repository
+
+                                            if renameCounter == "0":
+                                                newFilePath = shutil.copytree(filepath,os.path.join(REPOSITORY_DIRECTORY,os.path.basename(filepath)))
+                                            else:
+                                                newFilePath = shutil.copytree(filepath,os.path.join(REPOSITORY_DIRECTORY,os.path.basename(filepath) + " (" + renameCounter + ")"))
+                                            # deleting folder from desktop
+                                            shutil.rmtree(filepath)
+
+                                        else:
+                                            # copying file into repository
+                                            
+                                            if renameCounter == "0":
+                                                newFilePath = shutil.copy(filepath,os.path.join(REPOSITORY_DIRECTORY))
+                                            else:
+                                                newFilePath = shutil.copy(filepath,os.path.join(REPOSITORY_DIRECTORY,os.path.basename(filepath) + " (" + renameCounter + ")"))
+
+                                            # deleting file from desktop
+                                            os.remove(filepath)
+                                    except FileExistsError:
+                                        couldCopy = False
+                                        print("[presetManager] change_preset > file already exists in repository: " + filepath)
+                                        renameCounter = str(int(renameCounter) + 1)
+                                    except PermissionError as e:
+                                        couldCopy = True
+                                        if e.args[0] == 13:
+                                            # TODO: pass error to frontend
+                                            print("[presetManager] change_preset > Please close the following > " + filepath)
+                                        elif e.args[0] == 5:
+                                            # TODO: pass error to frontend
+                                            print("[presetManager] change_preset > Permission denied > " + filepath)
+
+
                                 # creating shortcut on desktop
                                 ShortcutUtil.create_shortcut(newFilePath, DESKTOP_PATH)
-                                # adding file to the presetlist
+                                # adding folder to the presetlist
                                 files.append({"path": newFilePath, "name": os.path.basename(newFilePath)})
 
                     #preset['files'] = files
