@@ -21,9 +21,7 @@ jobs:
 
       - name: Execute PresetManager.create_directories for creating JSON File 
         run: |
-            python -c "import sys; import pywin32; sys.path.append('source/dataHandlers/');
-            from presetManager import PresetManager; 
-            PresetManager.create_directories()"
+          python source/dataHandlers/presetManager.py
         
 
 
