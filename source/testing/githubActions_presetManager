@@ -1,0 +1,8 @@
+import presetManager as pmgr
+
+def main():
+    pmgr.create_directories()
+    pass
+
+if __name__ == "__main__":
+    main()
