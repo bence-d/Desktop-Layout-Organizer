@@ -21,8 +21,9 @@ jobs:
 
       - name: Execute PresetManager.create_directories for creating JSON File 
         run: |
-          pip install -e .
-          python source/testing/githubActions_presetManager.py
+          #pip install -e .
+          #python source/testing/githubActions_presetManager.py
+          ls -la
         
 
 
