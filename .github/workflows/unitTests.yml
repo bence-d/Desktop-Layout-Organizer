@@ -23,7 +23,7 @@ jobs:
         run: |
           #pip install -e .
           #python source/testing/githubActions_presetManager.py
-          ls -la
+          dir /a
         
 
 
