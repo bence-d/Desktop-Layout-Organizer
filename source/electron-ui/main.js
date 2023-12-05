@@ -34,7 +34,14 @@ const startAPI = () => {
 
     // Check all Python processes before starting the API Server
     getAllPythonPIDs(foreignPythonProcesses, () => {
-        let apiserver = spawn('python', ['dhapi.py'])
+        let apiserver;
+        
+        if (process.env.NODE_ENV == 'development') {
+            apiserver = spawn('python', ['./assets/api-server/dhapi.py']);
+        } else {
+            // Path to the executable when the app is built
+            apiserver = spawn('python', ['./resources/assets/api-server/dhapi.py']);
+        }
 
         apiserver.stdout.on('data', (data) => {
             if (!apiReady) {
