@@ -35,10 +35,10 @@ const startAPI = async () => {
     // Check all Python processes before starting the API Server
     getAllPythonPIDs(foreignPythonProcesses, async () => {
         if (process.env.NODE_ENV == 'development') {
-            spawn('python', ['./assets/api-server/dhapi.py']);
+            spawn('pythonw', ['./assets/api-server/dhapi.py']);
         } else {
             // Path to the executable when the app is built
-            spawn('python', ['./resources/assets/api-server/dhapi.py']);
+            spawn('pythonw', ['./resources/assets/api-server/dhapi.py']);
         }
 
         // Wait until 3 additional Python procecces have been started
@@ -79,7 +79,7 @@ const startAPI = async () => {
  * @param {callback} the function to call after the PIDs have been requested and saved.
  */
 function getAllPythonPIDs(actList, callback) {
-    exec('tasklist /FI "IMAGENAME eq python.exe" /FO csv', (error, stdout) => {
+    exec('tasklist /FI "IMAGENAME eq pythonw.exe" /FO csv', (error, stdout) => {
         if (error) {
             console.error(`Error: ${error.message}`);
             return;
