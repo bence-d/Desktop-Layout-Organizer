@@ -1,23 +1,8 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
 from pythoncom import CoInitialize
-import pyuac
-
-# Adding DataHandlers to the system path so the python importer can find it
-
-
-# 1) Get relative path to this file
-import os
 import sys
-pathToDataHandlers = os.path.dirname(os.path.realpath(__file__))
-
-# 2) Go to the parent folder 
-pathToDataHandlers = os.path.abspath(os.path.join(pathToDataHandlers, os.pardir))
-
-# 3) Add the folder containing 'dataHandlers' to the system path
-sys.path.append(pathToDataHandlers)
-
-# 4) Import the dataHandlers
+from os import devnull
 from dataHandlers.presetManager import PresetManager as pmgr
 from dataHandlers.presetManager import PRESET_LIST_FILE_NAME
 
@@ -104,8 +89,6 @@ api.add_resource(PresetImportEndpoint, '/import')
 api.add_resource(PresetExportEndpoint, '/export')
 
 if __name__ == '__main__':
-    if not pyuac.isUserAdmin():
-        pyuac.runAsAdmin()
-    else:        
-        app.run(debug=True)
-    
+    # Silence stdout and stderr (the app is built in no console mode, which then leads to errors when trying to print to stdout/stderr)
+    sys.stdout = sys.stderr = open(devnull, 'w')
+    app.run(debug=False)
