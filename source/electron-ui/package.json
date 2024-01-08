@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "dist:win": "electron-builder --win"
+    "buildlib": "cd assets/dev-libs && pip uninstall dataHandlers -y && pip install .",
+    "dist:win": "npm run buildlib && electron-builder --win"
   },
   "author": "Bence",
   "license": "ISC",
