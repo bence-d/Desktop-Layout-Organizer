@@ -9,7 +9,7 @@ from dataHandlers.presetManager import PRESET_LIST_FILE_NAME
 app = Flask(__name__)
 api = Api(app)
 
-todos = {}
+DEVELOPER_MODE = False
 
 class PresetEndpoints(Resource):
     def get(self, presetId):
@@ -90,5 +90,7 @@ api.add_resource(PresetExportEndpoint, '/export')
 
 if __name__ == '__main__':
     # Silence stdout and stderr (the app is built in no console mode, which then leads to errors when trying to print to stdout/stderr)
-    sys.stdout = sys.stderr = open(devnull, 'w')
-    app.run(debug=False)
+    if DEVELOPER_MODE == False:
+        sys.stdout = sys.stderr = open(devnull, 'w')
+
+    app.run(debug=DEVELOPER_MODE)
