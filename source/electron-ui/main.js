@@ -10,11 +10,11 @@ const createWindow = () => {
         width: 800,
         height: 600,
         frame: true,
-        icon: 'img/squid-logo.ico'
+        icon: 'img/squid-logo-3.0.ico'
     }
 )
 
-win.webContents.openDevTools()
+// win.webContents.openDevTools()
 win.removeMenu()
 
 win.loadFile('index.html')
