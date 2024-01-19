@@ -29,38 +29,40 @@ app.whenReady().then(() => {
  * Starts the API Server.
  * Checks the PIDs of the API Server and kills them when the window is closed.
  */
-const startAPI = () => {   
+const startAPI = async () => {   
     let apiReady = false; // disables PID checking after the PIDs of the API Server have been found
 
     // Check all Python processes before starting the API Server
-    getAllPythonPIDs(foreignPythonProcesses, () => {
-        let apiserver = spawn('python', ['dhapi.py'])
+    getAllPythonPIDs(foreignPythonProcesses, async () => {
+        if (process.env.NODE_ENV == 'development') {
+            spawn('pythonw', ['./assets/api-server/dhapi.py']);
+        } else {
+            // Path to the executable when the app is built
+            spawn('pythonw', ['./resources/assets/api-server/dhapi.py']);
+        }
 
-        apiserver.stdout.on('data', (data) => {
-            if (!apiReady) {
-                let datalowercase = data.toString().toLowerCase();
-                if (datalowercase.includes("serving")) {
-                    apiReady = true;
+        // Wait until 3 additional Python procecces have been started
+        while (ownPythonProcesses.length < 3) {
 
-                    // Check all Python processes after starting the API Server
-                    getAllPythonPIDs(ownPythonProcesses, () => {
+            // Check all Python processes every 100ms after starting the API Server
+            getAllPythonPIDs(ownPythonProcesses, () => {
 
-                        let tempOwnPythonProcesses = []; // By saving the PIDs in a temporary array, we can remove them from the original array without causing problems. (You shouldn't remove items from a list when iterating it) 
-                        
-                        // Remove processes that were already running before the API Server was started
-                        for (let i = 0; i < ownPythonProcesses.length; i++) {
-                            const pid = ownPythonProcesses[i];
-                            if (!foreignPythonProcesses.includes(pid)) {
-                                tempOwnPythonProcesses.push(pid);
-                            }mainWindow.openDevTools();
-                        }
+                let tempOwnPythonProcesses = []; // By saving the PIDs in a temporary array, we can remove them from the original array without causing problems. (You shouldn't remove items from a list when iterating it) 
 
-                        ownPythonProcesses = tempOwnPythonProcesses;
-                    });
+                // Remove processes that were already running before the API Server was started
+                for (let i = 0; i < ownPythonProcesses.length; i++) {
+                    const pid = ownPythonProcesses[i];
+                    if (!foreignPythonProcesses.includes(pid)) {
+                        tempOwnPythonProcesses.push(pid);
+                    }
                 }
-            }
-        });
-          
+
+                ownPythonProcesses = tempOwnPythonProcesses;
+            });
+
+            // sleep for 100ms
+            await new Promise(r => setTimeout(r, 100));
+        } 
     });
 
     win.on('close', () => {
@@ -77,7 +79,7 @@ const startAPI = () => {
  * @param {callback} the function to call after the PIDs have been requested and saved.
  */
 function getAllPythonPIDs(actList, callback) {
-    exec('tasklist /FI "IMAGENAME eq python.exe" /FO csv', (error, stdout) => {
+    exec('tasklist /FI "IMAGENAME eq pythonw.exe" /FO csv', (error, stdout) => {
         if (error) {
             console.error(`Error: ${error.message}`);
             return;
