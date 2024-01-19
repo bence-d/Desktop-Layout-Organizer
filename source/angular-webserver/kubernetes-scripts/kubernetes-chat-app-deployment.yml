@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: angularwebserver
+spec:
+  selector:
+    matchLabels:
+      app: angularwebserver
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: angularwebserver
+    spec:
+      containers:
+        - name: angularwebserver-app
+          image: kinryukai/angular-webserver:v2
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "1"
+            requests:
+              memory: 256Mi
+              cpu: "0.2"

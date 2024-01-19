@@ -5,7 +5,7 @@
     <img src=".\source\electron-ui\img\squid-logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h2>Desktop Layout Ogranizer</h2>
+  <h2>Desktop Layout Organizer</h2>
 
   <br>
 
