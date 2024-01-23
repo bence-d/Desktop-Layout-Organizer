@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "buildapi": "cd assets/api-server && pyinstaller --onefile --noconsole --uac-admin .\\dhapi.py",
+    "buildapi": "cd assets/api-server && pyinstaller --onefile --noconsole --uac-admin .\\dhapi.py && pyinstaller --onefile --noconsole --uac-admin .\\terminate_api.py",
     "buildlib": "cd assets/dev-libs && pip uninstall dataHandlers -y && pip install .",
     "dist:win": "npm run buildlib && electron-builder --win"
   },
