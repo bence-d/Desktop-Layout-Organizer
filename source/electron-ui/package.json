@@ -4,7 +4,7 @@
   "description": "Hello World!",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "set NODE_ENV=development&& electron .",
     "buildapi": "cd assets/api-server && pyinstaller --onefile --noconsole --uac-admin .\\dhapi.py && pyinstaller --onefile --noconsole --uac-admin .\\terminate_api.py",
     "buildlib": "cd assets/dev-libs && pip uninstall dataHandlers -y && pip install .",
     "dist:win": "npm run buildlib && electron-builder --win"
@@ -13,7 +13,7 @@
   "license": "ISC",
   "devDependencies": {
     "electron": "^24.1.2",
-    "electron-builder": "^24.6.4"
+    "electron-builder": "^24.9.1"
   },
   "build": {
     "appId": "com.dloteam.dlo",
@@ -22,8 +22,19 @@
       "output": "dist"
     },
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "requestedExecutionLevel": "requireAdministrator"
     },
+    "extraResources": [
+      {
+        "from": "./assets",
+        "to": "assets",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "asar": true,
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true

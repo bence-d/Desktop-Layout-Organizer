@@ -24,7 +24,7 @@ app.whenReady().then(() => {
 })
 
 /**
- * Starts the API Server.
+ * Handles the API Server, start it kills it upon closing the application
  * Checks the PIDs of the API Server and kills them when the window is closed.
  */
 const startAPI = () => {  
