@@ -29,9 +29,9 @@ app.whenReady().then(() => {
  */
 const startAPI = () => {  
     // start API server
-    exec('dhapi.exe', function (err, data) {
-        if (error) {
-            console.error(`[DHAPI] > Error: ${error.message}`);
+    exec('assets\\api-server\\dist\\dhapi.exe', function (err, data) {
+        if (err) {
+            console.error(`[DHAPI] > Error: ${err.message}`);
             return;
         } else {
             console.log(`[DHAPI] > data`);
@@ -41,8 +41,8 @@ const startAPI = () => {
     // kill API server when window is closed
     win.on('close', () => {
         exec('tasklist /FI "IMAGENAME eq dhapi.exe" /FO csv', (error, stdout) => {
-            if (error) {
-                console.error(`Error: ${error.message}`);
+            if (err) {
+                console.error(`Error: ${err.message}`);
                 return;
             }
     
