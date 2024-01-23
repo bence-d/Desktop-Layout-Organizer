@@ -1,5 +1,5 @@
 const { app, BrowserWindow, utilityProcess } = require('electron');
-const { spawn, exec } = require('node:child_process');
+const { spawn, exec, execSync } = require('node:child_process');
 
 let win = null;
 
@@ -38,31 +38,15 @@ const startAPI = () => {
         }
     })
 
-    // kill API server when window is closed
+    // run the executable that kills the API server)
     win.on('close', () => {
-        exec('tasklist /FI "IMAGENAME eq dhapi.exe" /FO csv', (error, stdout) => {
+        execSync('assets\\api-server\\dist\\terminate_api.exe', function (err, data) {
             if (err) {
-                console.error(`Error: ${err.message}`);
+                console.error(`[DHAPI] > Error: ${err.message}`);
                 return;
+            } else {
+                console.log(`[DHAPI] > data`);
             }
-    
-            const lines = stdout.split('\n');
-    
-            for (let i = 1; i < lines.length; i++) {
-                const line = lines[i].trim();
-    
-                if (line.length === 0) {
-                    continue;
-                }
-    
-                const parts = line.split(',');
-                const pid = parts[1];
-
-                exec('taskkill /t /f /pid ' + pid);
-            }
-    
-            callback();
-        });
-
+        })
     });
 }
