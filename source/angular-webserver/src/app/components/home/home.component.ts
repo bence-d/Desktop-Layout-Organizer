@@ -20,7 +20,7 @@ import { AuthService } from 'src/app/auth.service';
 export class HomeComponent {
 
   title = 'angular-webserver';
-  username = 'guest';
+  username = 'Gast';
 
   //constructor
   constructor(private authService: AuthService, private msalService : MsalService) {}
@@ -49,6 +49,6 @@ export class HomeComponent {
   }
 
   updateUsername() {
-    this.username = this.msalService.instance.getActiveAccount()?.name || "guest";
+    this.username = this.msalService.instance.getActiveAccount()?.name || "Gast";
   }
 }

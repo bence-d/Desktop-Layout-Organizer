@@ -30,8 +30,9 @@ export class SsoComponent implements OnInit {
     window.location.href = '/';
   }
 
-  logout(): void {
-    this.authService.logout();
+  async logout(): Promise<void> {
+    await this.authService.logout();
+    window.location.href = '/';
   }
 
   //Method to check if the user is logged in
