@@ -1,0 +1,30 @@
+.providers-container {
+    width: 20rem;
+    height: fit-content;
+    padding: 2em 10em 10em 10em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+
+    background-color: gray;
+
+    /*place in middle*/
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    h1 {
+        color: white;
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        margin-bottom: 2em;
+    }
+
+    button {
+        width: 100%;
+        margin-bottom: 1em;
+        height: 3em;
+        border-radius: 0.5em;
+    }
+}

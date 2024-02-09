@@ -2,29 +2,40 @@
 
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
+import { MsalService } from '@azure/msal-angular';
 
 @Component({
   selector: 'app-sso',
   templateUrl: './sso.component.html',
-  styleUrls: ['./sso.component.css'],
+  styleUrls: ['./sso.component.scss'],
 })
 export class SsoComponent implements OnInit {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private msalService: MsalService) {}
   ngOnInit(): void {
-    this.login();
+    // if the user gets redirected to this page when they're already logged in, log them out
+    if (this.isLoggedIn()) {
+      this.logout();
+    }
   }
 
-  login(): void {
-    this.authService.login();
+  async login(provider: string): Promise<void> {
+    switch (provider) {
+      case 'microsoft':
+        await this.authService.login();
+        break;
+      default:
+        break;
+    }
+
+    window.location.href = '/';
   }
 
   logout(): void {
     this.authService.logout();
   }
 
-  /*
-  isLoggedIn() : boolean{
-    return this.authService.isLoggedIn();
+  //Method to check if the user is logged in
+  isLoggedIn() : boolean {
+    return this.msalService.instance.getActiveAccount() !== null ? true : false;
   }
-  */
 }
