@@ -1,6 +1,6 @@
 // src/app/sso/sso.component.ts
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
 
 @Component({
@@ -8,8 +8,11 @@ import { AuthService } from '../auth.service';
   templateUrl: './sso.component.html',
   styleUrls: ['./sso.component.css'],
 })
-export class SsoComponent {
+export class SsoComponent implements OnInit {
   constructor(private authService: AuthService) {}
+  ngOnInit(): void {
+    this.login();
+  }
 
   login(): void {
     this.authService.login();

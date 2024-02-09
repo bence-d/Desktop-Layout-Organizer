@@ -34,7 +34,7 @@ export class AuthService {
       const loginResponse = await this.app.loginPopup({
         scopes: ['openid', 'profile', 'User.Read'],
       }).then( (response: AuthenticationResult) => {
-        this.msalService.instance.setActiveAccount(response.account)
+        this.msalService.instance.setActiveAccount(response.account);
       });
       console.log('Login successful', loginResponse);
     } catch (error) {
