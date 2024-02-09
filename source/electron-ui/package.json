@@ -5,7 +5,9 @@
   "main": "main.js",
   "scripts": {
     "start": "set NODE_ENV=development&& electron .",
-    "dist:win": "electron-builder --win"
+    "buildapi": "cd assets/api-server && pyinstaller --onefile --noconsole --uac-admin .\\dhapi.py && pyinstaller --onefile --noconsole --uac-admin .\\terminate_api.py",
+    "buildlib": "cd assets/dev-libs && pip uninstall dataHandlers -y && pip install .",
+    "dist:win": "npm run buildlib && electron-builder --win"
   },
   "author": "Bence",
   "license": "ISC",
